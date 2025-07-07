@@ -55,9 +55,9 @@ export default function HomePage() {
         <div className="grid lg:grid-cols-2 gap-12 items-center">
           <div className="text-center lg:text-left animate-fade-in">
             <h1 className="text-6xl md:text-8xl font-bold text-stone-800 mb-6 leading-tight">{t("home.title")}</h1>
-            <p className="text-2xl md:text-3xl text-stone-600 mb-8 leading-relaxed font-bold">
+            <div className="text-2xl md:text-3xl text-stone-600 mb-8 leading-relaxed font-bold">
               Organiza tu<FlipWords words={flipWords} duration={2000} className="text-emerald-600 font-bold" />
-            </p>
+            </div>
           </div>
 
           <div className="flex justify-center lg:justify-end animate-slide-up">
