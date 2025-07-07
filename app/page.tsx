@@ -53,9 +53,9 @@ export default function HomePage() {
       <section className="container mx-auto px-4 py-16 md:py-24">
         <div className="grid lg:grid-cols-2 gap-12 items-center">
           <div className="text-center lg:text-left animate-fade-in">
-            <h1 className="text-5xl md:text-7xl font-bold text-stone-800 mb-6 leading-tight">{t("home.title")}</h1>
-            <p className="text-xl md:text-2xl text-stone-600 mb-8 leading-relaxed">
-              Organiza tu <FlipWords words={flipWords} className="text-emerald-600 font-bold" />
+            <h1 className="text-6xl md:text-8xl font-bold text-stone-800 mb-6 leading-tight">{t("home.title")}</h1>
+            <p className="text-2xl md:text-3xl text-stone-600 mb-8 leading-relaxed font-bold">
+              Organiza tu<FlipWords words={flipWords} className="text-emerald-600 font-bold" />
             </p>
           </div>
 
