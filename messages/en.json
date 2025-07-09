@@ -1,0 +1,39 @@
+{
+  "home": {
+    "title": "Welcome",
+    "download": {
+      "available": "Available on",
+      "store": "Google Play"
+    },
+    "features": {
+      "title": "Features",
+      "home": {
+        "title": "Home",
+        "desc": "Home description"
+      },
+      "travel": {
+        "title": "Travel",
+        "desc": "Travel description"
+      },
+      "expenses": {
+        "title": "Expenses",
+        "desc": "Expenses description"
+      },
+      "gamification": {
+        "title": "Gamification",
+        "desc": "Gamification description"
+      },
+      "peace": {
+        "title": "Peace",
+        "desc": "Peace description"
+      }
+    },
+    "uses": {
+      "title": "Use Cases",
+      "luggage": "Luggage",
+      "expenses": "Expenses",
+      "planning": "Planning",
+      "home": "Home"
+    }
+  }
+} 

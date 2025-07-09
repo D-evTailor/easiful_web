@@ -1,0 +1,39 @@
+{
+  "home": {
+    "title": "Bienvenido",
+    "download": {
+      "available": "Disponible en",
+      "store": "Google Play"
+    },
+    "features": {
+      "title": "Características",
+      "home": {
+        "title": "Hogar",
+        "desc": "Descripción del hogar"
+      },
+      "travel": {
+        "title": "Viaje",
+        "desc": "Descripción del viaje"
+      },
+      "expenses": {
+        "title": "Gastos",
+        "desc": "Descripción de los gastos"
+      },
+      "gamification": {
+        "title": "Gamificación",
+        "desc": "Descripción de la gamificación"
+      },
+      "peace": {
+        "title": "Paz",
+        "desc": "Descripción de la paz"
+      }
+    },
+    "uses": {
+      "title": "Casos de uso",
+      "luggage": "Equipaje",
+      "expenses": "Gastos",
+      "planning": "Planificación",
+      "home": "Hogar"
+    }
+  }
+} 

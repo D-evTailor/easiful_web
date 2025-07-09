@@ -2,13 +2,16 @@
 
 import Link from "next/link"
 import { usePathname } from "next/navigation"
+import { useSession, signOut } from "next-auth/react"
 import { useLanguage } from "@/lib/language-context"
-import { Globe, Menu, X } from "lucide-react"
+import { Globe, Menu, X, User, LogOut, LayoutDashboard } from "lucide-react"
 import { Button } from "@/components/ui/button"
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger, DropdownMenuSeparator } from "@/components/ui/dropdown-menu"
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { useState } from "react"
 
 export default function Header() {
+  const { data: session, status } = useSession()
   const { language, setLanguage, t } = useLanguage()
   const pathname = usePathname()
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
@@ -19,30 +22,39 @@ export default function Header() {
     { href: "/contacto", label: t("nav.contact") },
   ]
 
+  const getLocalePath = (path: string) => {
+    if (path === "/") return `/${language}`;
+    return `/${language}${path}`;
+  }
+
   return (
     <header className="sticky top-0 z-50 bg-white/90 backdrop-blur-md border-b border-stone-200 shadow-sm">
       <div className="container mx-auto px-4 py-4">
         <nav className="flex items-center justify-between">
-          <Link href="/" className="text-2xl font-bold text-stone-800 hover:text-emerald-600 transition-colors">
+          <Link href={getLocalePath("/")} className="text-2xl font-bold text-stone-800 hover:text-emerald-600 transition-colors">
             Easiful
           </Link>
 
-          {/* Desktop Navigation */}
-          <div className="hidden md:flex items-center space-x-8">
-            {navItems.map((item) => (
-              <Link
-                key={item.href}
-                href={item.href}
-                className={`text-stone-700 hover:text-emerald-600 transition-colors font-medium relative ${
-                  pathname === item.href ? "text-emerald-600" : ""
-                }`}
-              >
-                {item.label}
-                {pathname === item.href && (
-                  <span className="absolute -bottom-1 left-0 w-full h-0.5 bg-emerald-600 rounded-full"></span>
-                )}
-              </Link>
-            ))}
+          {/* Combined Desktop Navigation */}
+          <div className="hidden md:flex items-center gap-6">
+            <div className="flex items-center gap-8">
+              {navItems.map((item) => (
+                <Link
+                  key={item.href}
+                  href={getLocalePath(item.href)}
+                  className="text-stone-700 hover:text-emerald-600 transition-colors font-medium"
+                >
+                  {item.label}
+                </Link>
+              ))}
+            </div>
+            
+            {/* Auth Button or Profile Icon on Desktop */}
+            {status === "unauthenticated" && (
+              <Button asChild size="sm">
+                <Link href={getLocalePath("/login")}>{t("nav.login")}</Link>
+              </Button>
+            )}
           </div>
 
           <div className="flex items-center gap-4">
@@ -59,6 +71,35 @@ export default function Header() {
                 <DropdownMenuItem onClick={() => setLanguage("en")}>🇺🇸 English</DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
+
+            {/* Profile Icon on Desktop (Authenticated) */}
+            {status === "authenticated" && (
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="ghost" className="relative h-9 w-9 rounded-full">
+                    <Avatar className="w-9 h-9 border-2 border-stone-200 group-hover:border-emerald-500 transition-colors">
+                      <AvatarImage src={session.user?.image || undefined} alt="User avatar" />
+                      <AvatarFallback>
+                        <User className="w-5 h-5 text-stone-600" />
+                      </AvatarFallback>
+                    </Avatar>
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent className="w-56" align="end" forceMount>
+                  <DropdownMenuItem asChild>
+                    <Link href={getLocalePath("/dashboard")}>
+                      <LayoutDashboard className="mr-2 h-4 w-4" />
+                      <span>Dashboard</span>
+                    </Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem onClick={() => signOut({ callbackUrl: getLocalePath('/') })}>
+                    <LogOut className="mr-2 h-4 w-4" />
+                    <span>Cerrar sesión</span>
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            )}
 
             {/* Mobile Menu Button */}
             <Button
@@ -79,15 +120,24 @@ export default function Header() {
               {navItems.map((item) => (
                 <Link
                   key={item.href}
-                  href={item.href}
-                  className={`text-stone-700 hover:text-emerald-600 transition-colors font-medium ${
-                    pathname === item.href ? "text-emerald-600" : ""
-                  }`}
+                  href={getLocalePath(item.href)}
+                  className="text-stone-700 hover:text-emerald-600 transition-colors font-medium"
                   onClick={() => setIsMobileMenuOpen(false)}
                 >
                   {item.label}
                 </Link>
               ))}
+              <div className="pt-4">
+                {status === "unauthenticated" ? (
+                  <Button asChild className="w-full">
+                    <Link href={getLocalePath("/login")} onClick={() => setIsMobileMenuOpen(false)}>{t("nav.login")}</Link>
+                  </Button>
+                ) : (
+                   <Button asChild className="w-full" variant="secondary">
+                    <Link href={getLocalePath("/dashboard")} onClick={() => setIsMobileMenuOpen(false)}>Ir al Dashboard</Link>
+                  </Button>
+                )}
+              </div>
             </div>
           </div>
         )}

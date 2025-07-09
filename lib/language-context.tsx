@@ -58,6 +58,7 @@ const translations = {
     "contact.message": "Mensaje",
     "contact.send": "Enviar mensaje",
     "contact.success": "¡Mensaje enviado con éxito!",
+    "nav.login": "Acceder",
 
     // Footer
     "footer.rights": "Todos los derechos reservados.",
@@ -107,6 +108,7 @@ const translations = {
     "contact.message": "Message",
     "contact.send": "Send message",
     "contact.success": "Message sent successfully!",
+    "nav.login": "Login",
 
     // Footer
     "footer.rights": "All rights reserved.",
@@ -115,8 +117,8 @@ const translations = {
 
 const LanguageContext = createContext<LanguageContextType | undefined>(undefined)
 
-export function LanguageProvider({ children }: { children: ReactNode }) {
-  const [language, setLanguage] = useState<Language>("es")
+export function LanguageProvider({ children, initialLanguage }: { children: ReactNode, initialLanguage: Language }) {
+  const [language, setLanguage] = useState<Language>(initialLanguage)
 
   const t = (key: string): string => {
     return translations[language][key as keyof (typeof translations)["es"]] || key
