@@ -24,25 +24,23 @@ export function AuthContainer({
 }: AuthContainerProps) {
 
   return (
-    <div className="relative min-h-screen w-full">
+    <div className="relative min-h-screen w-full overflow-hidden">
+      {/* Imagen de fondo en toda la pantalla */}
       <Image
         src={imageSrc}
         alt={imageAlt}
         fill
-        className="object-cover"
+        className="object-cover z-0"
         priority
       />
-      <div className="absolute inset-0 bg-black/30" /> 
-      
-      <div className="relative z-10 flex items-center justify-center min-h-screen p-4">
-        <div className="w-full max-w-md space-y-8 bg-stone-50/70 dark:bg-stone-900/70 backdrop-blur-lg rounded-2xl p-8 shadow-2xl">
-          
-          
+      <div className="absolute inset-0 bg-black/20 z-10" />
+      {/* Formulario en la mitad derecha, ocupando toda la mitad */}
+      <div className="absolute right-0 top-0 h-full w-1/2 bg-stone-50/50 dark:bg-stone-900/50 backdrop-blur-md z-20 flex items-center justify-center p-8">
+        <div className="w-full max-w-md space-y-8">
           <div className="text-center space-y-4">
             <h1 className="text-3xl lg:text-4xl font-bold text-stone-900 dark:text-stone-100">{title}</h1>
             <p className="text-stone-700 dark:text-stone-300 text-lg">{subtitle}</p>
           </div>
-          
           {children}
         </div>
       </div>

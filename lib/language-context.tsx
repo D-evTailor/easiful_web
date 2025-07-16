@@ -121,6 +121,7 @@ export function LanguageProvider({ children, initialLanguage }: { children: Reac
   const [language, setLanguage] = useState<Language>(initialLanguage)
 
   const t = (key: string): string => {
+    if (!language) return key;
     return translations[language][key as keyof (typeof translations)["es"]] || key
   }
 

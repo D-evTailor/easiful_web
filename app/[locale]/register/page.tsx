@@ -11,6 +11,7 @@ import { Mail, Lock, User, Phone } from "lucide-react"
 import { AuthContainer } from "@/components/auth/auth-container"
 import { AuthInput } from "@/components/auth/auth-input"
 import { AuthButton } from "@/components/auth/auth-button"
+import { AuthSeparator } from "@/components/auth/auth-separator"
 
 export default function RegisterPage() {
   const { language } = useLanguage()
@@ -176,14 +177,7 @@ export default function RegisterPage() {
             {isLoading ? "Creando cuenta..." : "Crear cuenta"}
           </AuthButton>
 
-          <div className="relative">
-            <div className="absolute inset-0 flex items-center">
-              <div className="w-full border-t border-stone-300" />
-            </div>
-            <div className="relative flex justify-center text-sm">
-              <span className="bg-stone-50 px-4 text-stone-500">o regístrate con</span>
-            </div>
-          </div>
+          <AuthSeparator text="o regístrate con" />
 
           <AuthButton 
             type="button" 
