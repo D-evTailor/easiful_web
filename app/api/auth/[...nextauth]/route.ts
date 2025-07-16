@@ -1,31 +1,12 @@
 import NextAuth from "next-auth";
 import GoogleProvider from "next-auth/providers/google";
 import CredentialsProvider from "next-auth/providers/credentials";
-import { initializeApp, getApps, getApp, type FirebaseOptions } from "firebase/app";
-import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
-import { getFirestore } from "firebase-admin/firestore";
-import { app } from "@/lib/firebase-config";
-
-// Server-side Firebase configuration for NextAuth
-const adminFirebaseConfig: FirebaseOptions = {
-  apiKey: process.env.FIREBASE_API_KEY,
-  authDomain: process.env.FIREBASE_AUTH_DOMAIN,
-  projectId: process.env.FIREBASE_PROJECT_ID,
-  storageBucket: process.env.FIREBASE_STORAGE_BUCKET,
-  messagingSenderId: process.env.FIREBASE_MESSAGING_SENDER_ID,
-  appId: process.env.FIREBASE_APP_ID,
-};
-
-// Initialize a specific app for admin operations to avoid conflicts
-const adminApp = !getApps().some(app => app.name === 'admin-auth') 
-  ? initializeApp(adminFirebaseConfig, 'admin-auth') 
-  : getApp('admin-auth');
-const adminAuth = getAuth(adminApp);
-const adminDb = getFirestore(adminApp);
+import { signInWithEmailAndPassword } from "firebase/auth";
+import { adminDb } from "@/lib/firebase-admin";
+import { auth } from "@/lib/firebase-config";
 
 // Log the Google Client ID to ensure it's loaded correctly on the server
 console.log("SERVER: Using Google Client ID:", process.env.GOOGLE_CLIENT_ID);
-
 
 export const authOptions = {
   providers: [
@@ -45,7 +26,7 @@ export const authOptions = {
         }
         try {
           const userCredential = await signInWithEmailAndPassword(
-            adminAuth, // Use the dedicated admin auth instance
+            auth, // Use the client-side auth for credentials
             credentials.email,
             credentials.password
           );
@@ -82,13 +63,21 @@ export const authOptions = {
       if (session?.user && token?.id) {
         session.user.id = token.id;
         
-        const userRef = adminDb.collection("users").doc(token.id as string);
-        const userDoc = await userRef.get();
+        // Only try to fetch user data if Firebase Admin is available
+        if (adminDb) {
+          try {
+            const userRef = adminDb.collection("users").doc(token.id as string);
+            const userDoc = await userRef.get();
 
-        if (userDoc.exists()) {
-          const userData = userDoc.data();
-          // Attach subscription data to the session user object
-          session.user.subscription = userData?.subscription || null;
+            if (userDoc.exists) {
+              const userData = userDoc.data();
+              // Attach subscription data to the session user object
+              session.user.subscription = userData?.subscription || null;
+            }
+          } catch (error) {
+            console.error("Error fetching user data:", error);
+            // Don't fail the session if we can't fetch user data
+          }
         }
       }
       return session;
