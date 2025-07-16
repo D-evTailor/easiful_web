@@ -1,0 +1,247 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // =====================================================================
+    // Helper Functions
+    // =====================================================================
+
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isUser(userId) {
+      return isSignedIn() && request.auth.uid == userId;
+    }
+
+    // --- (NUEVO) ---
+    // Revisa si un usuario tiene una suscripción premium activa.
+    // Lee el estado de la suscripción desde el propio documento del usuario.
+    function isPremium(userId) {
+      // Accede al documento del usuario para obtener los datos de su suscripción.
+      let userData = get(/databases/$(database)/documents/users/$(userId)).data;
+      // Devuelve 'true' si el plan no es 'free' y el estado es 'active'.
+      return userData.subscription.planId != 'free' && userData.subscription.status == 'active';
+    }
+
+    // Function to check if a user is a member of a specific household
+    function isHouseholdMember(householdId) {
+      // The user's UID must be in the `memberIds` array of the household document.
+      return isSignedIn() && request.auth.uid in get(/databases/$(database)/documents/households/$(householdId)).data.memberIds;
+    }
+
+    // Function to get the role of a user within a household
+    function getUserRole(householdId, userId) {
+      return get(/databases/$(database)/documents/households/$(householdId)/members/$(userId)).data.role;
+    }
+
+    // Functions to check the role of the requesting user
+    function isRole(householdId, role) {
+        return isHouseholdMember(householdId) && getUserRole(householdId, request.auth.uid) == role;
+    }
+
+    function isAdult(householdId) {
+      return isRole(householdId, 'Adult');
+    }
+
+    function isAdmin(householdId) {
+      return isRole(householdId, 'ADMIN');
+    }
+
+    function isAdultOrAdmin(householdId) {
+      return isAdult(householdId) || isAdmin(householdId);
+    }
+    
+    function isChild(householdId) {
+        return isRole(householdId, 'CHILD');
+    }
+
+    // Data validation functions
+    function isValidRole(role) {
+        return role in ['ADMIN', 'Adult', 'Child'];
+    }
+
+    function isValidTask(task) {
+        return task.keys().hasAll(['title', 'createdAt', 'createdBy']) &&
+               task.title is string && task.title.size() > 0 &&
+               task.createdAt is timestamp &&
+               task.createdBy is string && task.createdBy == request.auth.uid;
+    }
+
+
+    // =====================================================================
+    // Collection Rules
+    // =====================================================================
+
+    // Rules for user profiles
+    match /users/{userId} {
+      // --- (MODIFICADO) ---
+      // Se mantiene la lectura para usuarios autenticados.
+      // La actualización ahora tiene una regla de seguridad CRÍTICA:
+      // un usuario no puede modificar su propio campo de suscripción.
+      // Esto solo lo pueden hacer tus Cloud Functions.
+      allow read: if isSignedIn();
+      allow create, delete: if isUser(userId);
+      allow update: if isUser(userId) &&
+                       // Esta condición asegura que el campo 'subscription' no puede ser modificado por el cliente.
+                       request.resource.data.subscription == resource.data.subscription;
+
+      // Rules for user-specific notification settings
+      match /notificationSettings/{settingsId} {
+        allow read, write, delete: if isUser(userId);
+      }
+    }
+
+    // Rules for households and their subcollections
+    match /households/{householdId} {
+      allow read: if request.auth.uid in resource.data.memberIds;
+      
+      // --- (MODIFICADO) Regla 1: Limitar Creación de Hogares ---
+      // Un usuario ahora necesita ser PREMIUM para poder crear un hogar.
+      allow create: if isSignedIn() &&
+                     request.auth.uid == request.resource.data.createdBy &&
+                     request.auth.uid in request.resource.data.memberIds &&
+                     isPremium(request.auth.uid); // <- La nueva condición de seguridad
+
+      // --- (MODIFICADO) Regla 2: Limitar Adición de Miembros ---
+      // Solo un adulto/admin puede actualizar el hogar.
+      // Además, solo se permite si el creador es premium O si el número
+      // de miembros no supera el límite del plan gratuito (ej: 3).
+      allow update: if isAdultOrAdmin(householdId) &&
+                     // Se asegura que el propietario no se pueda cambiar.
+                     request.resource.data.createdBy == resource.data.createdBy &&
+                     // Se aplica la lógica de suscripción.
+                     (isPremium(resource.data.createdBy) || request.resource.data.memberIds.size() <= 3);
+
+      allow delete: if isAdmin(householdId); // Only an ADMIN can delete a whole household
+
+      // --- Subcollections of a Household ---
+
+      match /members/{userId} {
+        allow read: if isHouseholdMember(householdId);
+
+        allow create: if isSignedIn() && 
+                         (request.auth.uid == userId || // User can create their own member record
+                          (exists(/databases/$(database)/documents/households/$(householdId)) && 
+                           isAdultOrAdmin(householdId))) && // Or admin can add others if household exists
+                         isValidRole(request.resource.data.role);
+
+        allow update: if (isAdultOrAdmin(householdId) && isValidRole(request.resource.data.role)) ||
+                         (isUser(userId) && request.resource.data.role == resource.data.role);
+
+        allow delete: if isAdultOrAdmin(householdId);
+      }
+
+      // Resto de tus reglas de subcolecciones (tasks, gamification, etc.)
+      // se mantienen intactas ya que heredan la seguridad de las reglas padre.
+      
+      match /tasks/{taskId} {
+        allow read: if isHouseholdMember(householdId);
+        allow create: if isHouseholdMember(householdId) && isValidTask(request.resource.data);
+        allow update, delete: if isHouseholdMember(householdId) &&
+                                 (resource.data.createdBy == request.auth.uid || isAdultOrAdmin(householdId));
+      }
+
+      match /gamification/{userId} {
+        allow read: if isUser(userId) && isHouseholdMember(householdId);
+        allow write: if isUser(userId) && isHouseholdMember(householdId);
+        allow read: if isAdultOrAdmin(householdId);
+      }
+
+      match /invites/{inviteId} {
+        allow read, create, delete: if isAdultOrAdmin(householdId);
+        allow create: if isAdultOrAdmin(householdId) &&
+                       request.resource.data.keys().hasAll(['householdId', 'role', 'createdBy', 'expiresAt']);
+      }
+
+      match /expenses/{expenseId} {
+        allow read: if isHouseholdMember(householdId);
+        allow create: if isHouseholdMember(householdId);
+        allow update, delete: if isHouseholdMember(householdId) &&
+                                 (resource.data.paidById == request.auth.uid || 
+                                  resource.data.createdBy == request.auth.uid || 
+                                  isAdultOrAdmin(householdId));
+      }
+
+      match /payments/{paymentId} {
+        allow read: if isHouseholdMember(householdId);
+        allow create: if isHouseholdMember(householdId);
+        allow update, delete: if isHouseholdMember(householdId) &&
+                                 (resource.data.fromUserId == request.auth.uid || 
+                                  resource.data.toUserId == request.auth.uid ||
+                                  isAdultOrAdmin(householdId));
+      }
+    }
+
+    // --- El resto de tus reglas a nivel raíz se mantienen igual ---
+    
+    match /tasks/{taskId} {
+      allow read: if isHouseholdMember(resource.data.householdId) ||
+                     (isSignedIn() && (resource.data.createdBy == request.auth.uid || 
+                                      resource.data.assignedToId == request.auth.uid ||
+                                      (resource.data.assignedToIds != null && request.auth.uid in resource.data.assignedToIds)));
+      allow create: if isHouseholdMember(request.resource.data.householdId) && isValidTask(request.resource.data);
+      allow update, delete: if isHouseholdMember(resource.data.householdId) && (resource.data.createdBy == request.auth.uid || isAdultOrAdmin(resource.data.householdId));
+      allow delete: if isSignedIn() && (resource.data.createdBy == request.auth.uid || 
+                                       resource.data.assignedToId == request.auth.uid ||
+                                       (resource.data.assignedToIds != null && request.auth.uid in resource.data.assignedToIds));
+    }
+
+    match /shopping_lists/{listId} {
+      allow read, update, delete: if isHouseholdMember(resource.data.householdId);
+      allow create: if isHouseholdMember(request.resource.data.householdId);
+      allow read, delete: if isSignedIn() && resource.data.createdBy == request.auth.uid;
+
+      match /items/{itemId} {
+          allow read, create, update: if isHouseholdMember(get(/databases/$(database)/documents/shopping_lists/$(listId)).data.householdId);
+          allow delete: if isHouseholdMember(get(/databases/$(database)/documents/shopping_lists/$(listId)).data.householdId) || 
+                         (isSignedIn() && resource.data.addedBy == request.auth.uid);
+      }
+    }
+
+    match /expenses/{expenseId} {
+      allow read: if isHouseholdMember(resource.data.householdId) ||
+                     (isSignedIn() && (resource.data.paidById == request.auth.uid || 
+                                      resource.data.createdBy == request.auth.uid));
+      allow create: if isHouseholdMember(request.resource.data.householdId);
+      allow update, delete: if isHouseholdMember(resource.data.householdId) && 
+                               (resource.data.paidById == request.auth.uid || 
+                                resource.data.createdBy == request.auth.uid || 
+                                isAdultOrAdmin(resource.data.householdId));
+      allow delete: if isSignedIn() && (resource.data.paidById == request.auth.uid || 
+                                       resource.data.createdBy == request.auth.uid);
+    }
+
+    match /payments/{paymentId} {
+      allow read: if isHouseholdMember(resource.data.householdId);
+      allow create: if isHouseholdMember(request.resource.data.householdId);
+      allow update, delete: if isHouseholdMember(resource.data.householdId) && (resource.data.fromUserId == request.auth.uid || resource.data.toUserId == request.auth.uid || isAdultOrAdmin(resource.data.householdId));
+    }
+
+    match /gamification/{userId} {
+      allow read: if isUser(userId) || 
+                     (request.auth.uid != null && 
+                      exists(/databases/$(database)/documents/gamification/$(userId)) &&
+                      isAdultOrAdmin(get(/databases/$(database)/documents/gamification/$(userId)).data.householdId));
+      allow write, delete: if isUser(userId);
+    }
+
+    match /user_rewards/{userId} {
+      allow read: if isUser(userId) || 
+                     (request.auth.uid != null && 
+                      exists(/databases/$(database)/documents/user_rewards/$(userId)) &&
+                      isAdultOrAdmin(get(/databases/$(database)/documents/user_rewards/$(userId)).data.householdId));
+      allow write, delete: if isUser(userId);
+    }
+
+    match /gamification_events/{eventId} {
+      allow read: if isSignedIn() && 
+                     request.auth.uid != null &&
+                     isHouseholdMember(resource.data.householdId);
+      allow create: if isSignedIn() &&
+                       request.auth.uid == request.resource.data.userId &&
+                       isHouseholdMember(request.resource.data.householdId);
+    }
+  }
+}

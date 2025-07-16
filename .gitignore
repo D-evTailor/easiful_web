@@ -28,6 +28,7 @@ yarn-error.log*
 # local env files
 .env*.local
 .env
+service-account-key.json
 
 # vercel
 .vercel
@@ -51,3 +52,4 @@ Thumbs.db
 # Temporary folders
 tmp/
 temp/
+
