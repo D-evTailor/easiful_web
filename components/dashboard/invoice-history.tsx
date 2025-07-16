@@ -11,6 +11,7 @@ import {
 import { Card } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Download } from "lucide-react"
+import { Badge } from "@/components/ui/badge"
 
 interface Invoice {
   id: string;
@@ -21,9 +22,10 @@ interface Invoice {
 
 interface InvoiceHistoryProps {
   invoices: Invoice[];
+  isPremium: boolean;
 }
 
-export default function InvoiceHistory({ invoices }: InvoiceHistoryProps) {
+export default function InvoiceHistory({ invoices, isPremium }: InvoiceHistoryProps) {
   const statusClasses = {
     Pagado: "text-emerald-600",
     Pendiente: "text-amber-600",
@@ -50,11 +52,17 @@ export default function InvoiceHistory({ invoices }: InvoiceHistoryProps) {
                 <TableRow key={invoice.id}>
                   <TableCell className="font-medium">{invoice.id}</TableCell>
                   <TableCell>{invoice.date}</TableCell>
-                  <TableCell>{invoice.amount}</TableCell>
-                  <TableCell className={statusClasses[invoice.status]}>{invoice.status}</TableCell>
+                  <TableCell>
+                    <Badge 
+                      variant={invoice.status === "Pagado" ? "default" : "destructive"}
+                      className={invoice.status === "Pagado" ? "bg-green-100 text-green-800" : "bg-red-100 text-red-800"}
+                    >
+                      {invoice.status}
+                    </Badge>
+                  </TableCell>
+                  <TableCell className="text-right">{invoice.amount}</TableCell>
                   <TableCell className="text-right">
-                    <Button variant="outline" size="sm">
-                      <Download className="w-4 h-4 mr-2" />
+                    <Button variant="outline" size="sm" disabled={!isPremium}>
                       Descargar
                     </Button>
                   </TableCell>
@@ -63,7 +71,9 @@ export default function InvoiceHistory({ invoices }: InvoiceHistoryProps) {
             ) : (
               <TableRow>
                 <TableCell colSpan={5} className="text-center text-stone-500 py-8">
-                  No hay facturas que mostrar.
+                  {isPremium 
+                    ? "No tienes facturas anteriores." 
+                    : "El historial de facturas es una función premium."}
                 </TableCell>
               </TableRow>
             )}

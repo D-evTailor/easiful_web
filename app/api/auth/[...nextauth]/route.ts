@@ -3,6 +3,8 @@ import GoogleProvider from "next-auth/providers/google";
 import CredentialsProvider from "next-auth/providers/credentials";
 import { initializeApp, getApps, getApp, type FirebaseOptions } from "firebase/app";
 import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
+import { getFirestore } from "firebase-admin/firestore";
+import { app } from "@/lib/firebase-config";
 
 // Server-side Firebase configuration for NextAuth
 const adminFirebaseConfig: FirebaseOptions = {
@@ -19,6 +21,7 @@ const adminApp = !getApps().some(app => app.name === 'admin-auth')
   ? initializeApp(adminFirebaseConfig, 'admin-auth') 
   : getApp('admin-auth');
 const adminAuth = getAuth(adminApp);
+const adminDb = getFirestore(adminApp);
 
 // Log the Google Client ID to ensure it's loaded correctly on the server
 console.log("SERVER: Using Google Client ID:", process.env.GOOGLE_CLIENT_ID);
@@ -76,7 +79,18 @@ export const authOptions = {
       return token;
     },
     async session({ session, token }: { session: any, token: any }) {
-      session.user.id = token.id;
+      if (session?.user && token?.id) {
+        session.user.id = token.id;
+        
+        const userRef = adminDb.collection("users").doc(token.id as string);
+        const userDoc = await userRef.get();
+
+        if (userDoc.exists()) {
+          const userData = userDoc.data();
+          // Attach subscription data to the session user object
+          session.user.subscription = userData?.subscription || null;
+        }
+      }
       return session;
     },
   },

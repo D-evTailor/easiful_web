@@ -3,29 +3,34 @@
     "title": "Bienvenido",
     "download": {
       "available": "Disponible en",
-      "store": "Google Play"
+      "googlePlay": "Google Play",
+      "appStore": "App Store"
     },
     "features": {
       "title": "Características",
-      "home": {
-        "title": "Hogar",
-        "desc": "Descripción del hogar"
+      "dashboard": {
+        "title": "Dashboard",
+        "desc": "Visión global de tu proyecto en un vistazo"
       },
-      "travel": {
-        "title": "Viaje",
-        "desc": "Descripción del viaje"
+      "planning": {
+        "title": "Planificación",
+        "desc": "Gestiona tareas y fechas clave en un solo lugar"
+      },
+      "shopping": {
+        "title": "Listas de compras",
+        "desc": "Crea y comparte listas colaborativas al instante"
       },
       "expenses": {
         "title": "Gastos",
-        "desc": "Descripción de los gastos"
+        "desc": "Registra y reparte gastos en segundos"
+      },
+      "members": {
+        "title": "Miembros",
+        "desc": "Invita y gestiona roles de tu equipo o compañeros"
       },
       "gamification": {
         "title": "Gamificación",
-        "desc": "Descripción de la gamificación"
-      },
-      "peace": {
-        "title": "Paz",
-        "desc": "Descripción de la paz"
+        "desc": "Convierte el progreso en recompensas motivadoras"
       }
     },
     "uses": {

@@ -4,7 +4,7 @@ import { redirect } from "next/navigation"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { ArrowLeft } from "lucide-react"
-import Pricing from "@/components/pricing/pricing"
+import PricingClient from "@/components/pricing/pricing-client"
 
 export default async function PricingPage({ params: { locale } }: { params: { locale: string } }) {
   const session = await getServerSession(authOptions)
@@ -33,7 +33,7 @@ export default async function PricingPage({ params: { locale } }: { params: { lo
         </header>
 
         <div className="mt-16 w-full">
-          <Pricing />
+          <PricingClient />
         </div>
 
       </div>

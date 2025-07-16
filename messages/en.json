@@ -3,29 +3,34 @@
     "title": "Welcome",
     "download": {
       "available": "Available on",
-      "store": "Google Play"
+      "googlePlay": "Google Play",
+      "appStore": "App Store"
     },
     "features": {
       "title": "Features",
-      "home": {
-        "title": "Home",
-        "desc": "Home description"
+      "dashboard": {
+        "title": "Dashboard",
+        "desc": "Global view of your project at a glance"
       },
-      "travel": {
-        "title": "Travel",
-        "desc": "Travel description"
+      "planning": {
+        "title": "Planning",
+        "desc": "Manage tasks and key dates in one place"
+      },
+      "shopping": {
+        "title": "Shopping Lists",
+        "desc": "Create and share collaborative lists instantly"
       },
       "expenses": {
         "title": "Expenses",
-        "desc": "Expenses description"
+        "desc": "Record and split expenses in seconds"
+      },
+      "members": {
+        "title": "Members",
+        "desc": "Invite and manage roles for your team or roommates"
       },
       "gamification": {
         "title": "Gamification",
-        "desc": "Gamification description"
-      },
-      "peace": {
-        "title": "Peace",
-        "desc": "Peace description"
+        "desc": "Turn progress into motivating rewards"
       }
     },
     "uses": {
