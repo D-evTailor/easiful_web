@@ -1,6 +1,6 @@
 "use client"
 
-import React, { useState } from "react"
+import React, { useState, useEffect } from "react"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
 import { signIn } from "next-auth/react"
@@ -20,6 +20,15 @@ export default function LoginPage() {
   })
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  
+  // Check for OAuth errors in URL
+  useEffect(() => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const oauthError = urlParams.get('error');
+    if (oauthError === 'OAuthCallback') {
+      setError('Error en la autenticación con Google. Verifica tu configuración.');
+    }
+  }, []);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target
@@ -50,7 +59,10 @@ export default function LoginPage() {
   }
 
   const handleGoogleLogin = () => {
-    signIn("google", { callbackUrl: `/${language}/dashboard` });
+    signIn("google", { 
+      callbackUrl: `/${language}/dashboard`,
+      redirect: true 
+    });
   }
 
   return (

@@ -39,6 +39,7 @@ export default function HomePage() {
                     alt="Easiful App - Pantalla de inicio"
                     width={280}
                     height={560}
+                    priority
                     className="rounded-3xl transform rotate-3 object-cover"
                     style={{ aspectRatio: '280/560' }}
                   />

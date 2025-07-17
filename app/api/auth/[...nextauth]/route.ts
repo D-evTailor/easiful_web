@@ -5,8 +5,7 @@ import { signInWithEmailAndPassword } from "firebase/auth";
 import { adminDb } from "@/lib/firebase-admin";
 import { auth } from "@/lib/firebase-config";
 
-// Log the Google Client ID to ensure it's loaded correctly on the server
-console.log("SERVER: Using Google Client ID:", process.env.GOOGLE_CLIENT_ID);
+// Google Client ID is loaded from environment variables
 
 export const authOptions = {
   providers: [
@@ -51,11 +50,12 @@ export const authOptions = {
     }),
   ],
   callbacks: {
-    // Estos callbacks son útiles para enriquecer el token y la sesión
-    // con datos adicionales del usuario que vienen de Firebase.
-    async jwt({ token, user }: { token: any, user: any }) {
+    async jwt({ token, user, account }: { token: any, user: any, account: any }) {
       if (user) {
         token.id = user.id;
+      }
+      if (account) {
+        token.provider = account.provider;
       }
       return token;
     },
@@ -73,20 +73,50 @@ export const authOptions = {
               const userData = userDoc.data();
               // Attach subscription data to the session user object
               session.user.subscription = userData?.subscription || null;
+            } else {
+              // Create user document if it doesn't exist
+              await userRef.set({
+                email: session.user.email,
+                name: session.user.name,
+                image: session.user.image,
+                createdAt: new Date(),
+                subscription: {
+                  planId: 'free',
+                  status: 'active',
+                  startDate: new Date(),
+                  endDate: null
+                }
+              });
+              session.user.subscription = {
+                planId: 'free',
+                status: 'active',
+                startDate: new Date(),
+                endDate: null
+              };
             }
           } catch (error) {
             console.error("Error fetching user data:", error);
             // Don't fail the session if we can't fetch user data
+            // Continue with the session without subscription data
           }
         }
       }
       return session;
     },
+    async redirect({ url, baseUrl }: { url: string, baseUrl: string }) {
+      // Allow relative callback URLs
+      if (url.startsWith("/")) return `${baseUrl}${url}`;
+      // Allow callback URLs on the same origin
+      else if (new URL(url).origin === baseUrl) return url;
+      return baseUrl;
+    },
   },
   pages: {
     signIn: '/login', // Redirige a la página de login personalizada
+    error: '/login', // Redirige errores a la página de login
   },
   secret: process.env.NEXTAUTH_SECRET,
+  debug: false,
 };
 
 const handler = NextAuth(authOptions);

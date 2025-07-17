@@ -21,6 +21,7 @@ export function DownloadButton() {
           width={200}
           height={60}
           className="cursor-pointer"
+          style={{ width: 'auto', height: 'auto' }}
         />
       </button>
 
@@ -35,6 +36,7 @@ export function DownloadButton() {
           width={200}
           height={60}
           className="cursor-pointer"
+          style={{ width: 'auto', height: 'auto' }}
         />
       </button>
     </div>

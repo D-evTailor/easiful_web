@@ -55,6 +55,7 @@ export default function Footer() {
                   width={135} 
                   height={40} 
                   className="hover:opacity-90 transition-opacity"
+                  style={{ width: 'auto', height: 'auto' }}
                 />
               </Link>
               <Link href="https://www.youtube.com/shorts/SXHMnicI6Pg" passHref className="-mt-4">
@@ -64,6 +65,7 @@ export default function Footer() {
                   width={135} 
                   height={40} 
                   className="hover:opacity-90 transition-opacity"
+                  style={{ width: 'auto', height: 'auto' }}
                 />
               </Link>
             </div>

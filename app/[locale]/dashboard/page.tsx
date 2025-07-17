@@ -8,7 +8,8 @@ import { Button } from "@/components/ui/button"
 import Link from "next/link"
 import { Lock } from "lucide-react"
 
-export default async function DashboardPage({ params: { locale } }: { params: { locale: string } }) {
+export default async function DashboardPage({ params }: { params: Promise<{ locale: string }> }) {
+  const { locale } = await params;
   const session = await getServerSession(authOptions)
 
   if (!session) {

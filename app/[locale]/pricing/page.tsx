@@ -6,7 +6,8 @@ import { Button } from "@/components/ui/button"
 import { ArrowLeft } from "lucide-react"
 import PricingClient from "@/components/pricing/pricing-client"
 
-export default async function PricingPage({ params: { locale } }: { params: { locale: string } }) {
+export default async function PricingPage({ params }: { params: Promise<{ locale: string }> }) {
+  const { locale } = await params;
   const session = await getServerSession(authOptions)
 
   if (!session) {

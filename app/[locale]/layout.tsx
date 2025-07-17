@@ -42,13 +42,16 @@ export default async function LocaleLayout({
 }: Props) {
   const { locale } = await params;
   const messages = await getMessages();
+  
+  // Validate locale
+  const validLocale = locale === "es" || locale === "en" ? locale : "es";
 
   return (
-    <html lang={locale}>
+    <html lang={validLocale}>
       <body className={quicksand.className}>
         <Providers>
           <NextIntlClientProvider messages={messages}>
-            <LanguageProvider initialLanguage={locale as "es" | "en"}>
+            <LanguageProvider initialLanguage={validLocale}>
               <div className="min-h-screen bg-gradient-to-br from-amber-50 via-stone-50 to-emerald-50">
                 <Header />
                 <main>{children}</main>
