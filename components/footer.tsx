@@ -18,35 +18,33 @@ export default function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           {/* Company Info */}
           <div className="md:col-span-1">
-            <h3 className="text-xl font-bold text-stone-800 mb-4">Easiful</h3>
-            <p className="mb-4">Simplifica tu vida</p>
+            <h3 className="text-xl font-bold text-stone-800 mb-4">{t("footer.company")}</h3>
+            <p className="mb-4">{t("footer.tagline")}</p>
           </div>
 
           {/* Legal Links */}
           <div>
-            <h4 className="font-semibold text-stone-800 mb-4">Legal</h4>
+            <h4 className="font-semibold text-stone-800 mb-4">{t("footer.legal")}</h4>
             <ul className="space-y-2">
-              <li><Link href={getLocalePath("/legal/aviso-legal")} className="hover:underline">Aviso Legal</Link></li>
-              <li><Link href={getLocalePath("/legal/privacidad")} className="hover:underline">Política de Privacidad</Link></li>
-              <li><Link href={getLocalePath("/legal/cookies")} className="hover:underline">Política de Cookies</Link></li>
-              {/* Add 'Condiciones de Contratación' if you sell something */}
-              {/* <li><Link href={getLocalePath("/legal/terminos")} className="hover:underline">Condiciones de Contratación</Link></li> */}
+              <li><Link href={getLocalePath("/legal/aviso-legal")} className="hover:underline">{t("footer.legalNotice")}</Link></li>
+              <li><Link href={getLocalePath("/legal/privacidad")} className="hover:underline">{t("footer.privacyPolicy")}</Link></li>
+              <li><Link href={getLocalePath("/legal/cookies")} className="hover:underline">{t("footer.cookiePolicy")}</Link></li>
             </ul>
           </div>
 
-          {/* Quick Links (Optional) */}
+          {/* Quick Links */}
           <div>
-            <h4 className="font-semibold text-stone-800 mb-4">Enlaces</h4>
+            <h4 className="font-semibold text-stone-800 mb-4">{t("footer.links")}</h4>
             <ul className="space-y-2">
-              <li><Link href={getLocalePath("/sobre-nosotros")} className="hover:underline">Sobre Nosotros</Link></li>
-              <li><Link href={getLocalePath("/contacto")} className="hover:underline">Contacto</Link></li>
-              <li><Link href={getLocalePath("/faq")} className="hover:underline">FAQ</Link></li>
+              <li><Link href={getLocalePath("/sobre-nosotros")} className="hover:underline">{t("nav.about")}</Link></li>
+              <li><Link href={getLocalePath("/contacto")} className="hover:underline">{t("nav.contact")}</Link></li>
+              <li><Link href={getLocalePath("/faq")} className="hover:underline">{t("footer.faq")}</Link></li>
             </ul>
           </div>
           
           {/* App Download */}
           <div>
-            <h4 className="font-semibold text-stone-800 mb-4">Descarga la App</h4>
+            <h4 className="font-semibold text-stone-800 mb-4">{t("footer.downloadApp")}</h4>
             <div className="flex flex-col -mt-4">
               <Link href="https://www.youtube.com/shorts/le6hBT8JsUY" passHref>
                 <Image 
@@ -74,7 +72,7 @@ export default function Footer() {
         </div>
 
         <div className="border-t border-stone-200 mt-8 pt-6 text-center text-sm">
-          <p>© {new Date().getFullYear()} Easiful. {t("footer.rights")}</p>
+          <p>© {new Date().getFullYear()} {t("footer.company")}. {t("footer.rights")}</p>
         </div>
       </div>
     </footer>

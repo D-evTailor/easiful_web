@@ -1,6 +1,6 @@
 "use client"
 
-import { useTranslations } from "next-intl"
+import { useLanguage } from "@/lib/language-context"
 import {
   LayoutDashboard,
   CalendarCheck,
@@ -12,7 +12,7 @@ import {
 import { motion } from "motion/react"
 
 export const FeaturesSection = () => {
-  const t = useTranslations()
+  const { t } = useLanguage()
 
   const features = [
     {
@@ -97,7 +97,7 @@ export const FeaturesSection = () => {
             {t("home.features.title")}
           </h2>
           <p className="mt-2 text-base text-muted-foreground">
-            Todo lo que necesitas, sin distracciones.
+            {t("home.features.subtitle")}
           </p>
         </motion.div>
 

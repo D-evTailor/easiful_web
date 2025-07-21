@@ -1,6 +1,8 @@
 import { getServerSession } from "next-auth/next"
 import { authOptions } from "@/app/api/auth/[...nextauth]/route"
 import { redirect } from "next/navigation"
+import { es } from "@/languages/es"
+import { en } from "@/languages/en"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { ArrowLeft } from "lucide-react"
@@ -9,6 +11,11 @@ import PricingClient from "@/components/pricing/pricing-client"
 export default async function PricingPage({ params }: { params: Promise<{ locale: string }> }) {
   const { locale } = await params;
   const session = await getServerSession(authOptions)
+  const t = (key: string): string => {
+    const translations = locale === "es" ? es : en;
+    const value = translations[key as keyof typeof es];
+    return typeof value === 'string' ? value : key;
+  }
 
   if (!session) {
     redirect(`/${locale}/login`)
@@ -19,10 +26,10 @@ export default async function PricingPage({ params }: { params: Promise<{ locale
       <div className="flex flex-col items-center">
         <header className="relative w-full text-center max-w-3xl mx-auto">
           <h1 className="text-4xl font-bold text-brand">
-            Elige tu Plan
+            {t("pricing.title")}
           </h1>
           <p className="text-stone-600 mt-3 text-lg">
-            ¡Bienvenido, {session?.user?.name || "Usuario"}! Es hora de llevar tu productividad al siguiente nivel.
+            {t("pricing.subtitle").replace("{name}", session?.user?.name || t("dashboard.user"))}
           </p>
           <div className="absolute top-0 left-0">
             <Button asChild variant="ghost" size="icon" className="transition-transform hover:scale-110">

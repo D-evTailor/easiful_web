@@ -36,19 +36,19 @@ export default function ContactPage() {
     const newErrors: FormErrors = {}
 
     if (!formData.name.trim()) {
-      newErrors.name = "El nombre es requerido"
+      newErrors.name = t("contact.nameRequired")
     }
 
     if (!formData.email.trim()) {
-      newErrors.email = "El email es requerido"
+      newErrors.email = t("contact.emailRequired")
     } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
-      newErrors.email = "El email no es válido"
+      newErrors.email = t("contact.emailInvalid")
     }
 
     if (!formData.message.trim()) {
-      newErrors.message = "El mensaje es requerido"
+      newErrors.message = t("contact.messageRequired")
     } else if (formData.message.trim().length < 10) {
-      newErrors.message = "El mensaje debe tener al menos 10 caracteres"
+      newErrors.message = t("contact.messageTooShort")
     }
 
     setErrors(newErrors)
@@ -117,7 +117,7 @@ export default function ContactPage() {
                   <Send className="w-10 h-10 text-emerald-600" />
                 </div>
                 <h3 className="text-2xl font-semibold text-emerald-600 mb-4">{t("contact.success")}</h3>
-                <p className="text-stone-600">Te responderemos pronto. ¡Gracias por contactarnos!</p>
+                <p className="text-stone-600">{t("contact.thanks")}</p>
               </div>
             ) : (
               <form onSubmit={handleSubmit} className="space-y-6">
@@ -135,7 +135,7 @@ export default function ContactPage() {
                     className={`w-full rounded-xl border-2 transition-colors ${
                       errors.name ? "border-red-300 focus:border-red-500" : "border-stone-300 focus:border-emerald-500"
                     } focus:ring-emerald-500/20 py-3`}
-                    placeholder="Tu nombre completo"
+                    placeholder={t("contact.namePlaceholder")}
                   />
                   {errors.name && <p className="text-red-500 text-sm mt-2">{errors.name}</p>}
                 </div>
@@ -154,7 +154,7 @@ export default function ContactPage() {
                     className={`w-full rounded-xl border-2 transition-colors ${
                       errors.email ? "border-red-300 focus:border-red-500" : "border-stone-300 focus:border-emerald-500"
                     } focus:ring-emerald-500/20 py-3`}
-                    placeholder="tu@email.com"
+                    placeholder={t("contact.emailPlaceholder")}
                   />
                   {errors.email && <p className="text-red-500 text-sm mt-2">{errors.email}</p>}
                 </div>
@@ -175,7 +175,7 @@ export default function ContactPage() {
                         ? "border-red-300 focus:border-red-500"
                         : "border-stone-300 focus:border-emerald-500"
                     } focus:ring-emerald-500/20 resize-none`}
-                    placeholder="Cuéntanos cómo podemos ayudarte..."
+                    placeholder={t("contact.messagePlaceholder")}
                   />
                   {errors.message && <p className="text-red-500 text-sm mt-2">{errors.message}</p>}
                 </div>
@@ -188,7 +188,7 @@ export default function ContactPage() {
                   {isSubmitting ? (
                     <div className="flex items-center justify-center gap-2">
                       <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
-                      Enviando...
+                      {t("contact.sending")}
                     </div>
                   ) : (
                     <div className="flex items-center justify-center gap-2">

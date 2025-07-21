@@ -1,6 +1,8 @@
 import { getServerSession } from "next-auth/next"
 import { authOptions } from "@/app/api/auth/[...nextauth]/route"
 import { redirect } from "next/navigation"
+import { es } from "@/languages/es"
+import { en } from "@/languages/en"
 import BillingCard from "@/components/dashboard/billing-card"
 import InvoiceHistory from "@/components/dashboard/invoice-history"
 import type { Subscription, Invoice } from "@/components/dashboard/types"
@@ -11,6 +13,11 @@ import { Lock } from "lucide-react"
 export default async function DashboardPage({ params }: { params: Promise<{ locale: string }> }) {
   const { locale } = await params;
   const session = await getServerSession(authOptions)
+  const t = (key: string): string => {
+    const translations = locale === "es" ? es : en;
+    const value = translations[key as keyof typeof es];
+    return typeof value === 'string' ? value : key;
+  }
 
   if (!session) {
     redirect(`/${locale}/login`)
@@ -39,10 +46,10 @@ export default async function DashboardPage({ params }: { params: Promise<{ loca
       <div className="space-y-8">
         <header>
           <h1 className="text-3xl font-bold text-brand">
-            Panel de Facturación
+            {t("dashboard.title")}
           </h1>
           <p className="text-stone-600 mt-2">
-            ¡Bienvenido de nuevo, {session?.user?.name || "Usuario"}! Aquí tienes un resumen de tu cuenta.
+            {t("dashboard.welcome").replace("{name}", session?.user?.name || t("dashboard.user"))}
           </p>
         </header>
 
@@ -53,12 +60,12 @@ export default async function DashboardPage({ params }: { params: Promise<{ loca
           {!isPremium && (
             <div className="p-6 bg-yellow-50 border border-yellow-200 rounded-lg text-center">
               <Lock className="mx-auto h-8 w-8 text-yellow-500 mb-2" />
-              <h3 className="text-lg font-semibold text-yellow-800">Función Premium</h3>
+              <h3 className="text-lg font-semibold text-yellow-800">{t("dashboard.premium.title")}</h3>
               <p className="text-yellow-700">
-                El historial de facturas solo está disponible en el plan Premium.
+                {t("dashboard.premium.description")}
               </p>
               <Button asChild className="mt-4 bg-brand hover:bg-brand/90">
-                <Link href={`/${locale}/pricing`}>Actualizar a Premium</Link>
+                <Link href={`/${locale}/pricing`}>{t("dashboard.premium.upgrade")}</Link>
               </Button>
             </div>
           )}

@@ -1,9 +1,10 @@
 "use client"
 
-import { useTranslations } from "next-intl"
+import { useLanguage } from "@/lib/language-context"
 import Image from "next/image"
 
 export function DownloadButton() {
+  const { language } = useLanguage()
   const handleDownload = () => {
     window.open("https://www.youtube.com/watch?v=xvFZjo5PgG0&list=RDxvFZjo5PgG0&start_radio=1&ab_channel=Duran", "_blank")
   }
@@ -17,7 +18,7 @@ export function DownloadButton() {
       >
         <Image
           src="/google.png"
-          alt="Disponible en Google Play"
+          alt={language === "es" ? "Disponible en Google Play" : "Get it on Google Play"}
           width={200}
           height={60}
           className="cursor-pointer"

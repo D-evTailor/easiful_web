@@ -12,7 +12,7 @@ import { AuthButton } from "@/components/auth/auth-button"
 import { AuthSeparator } from "@/components/auth/auth-separator"
 
 export default function LoginPage() {
-  const { language } = useLanguage();
+  const { language, t } = useLanguage();
   const router = useRouter();
   const [formData, setFormData] = useState({
     email: "",
@@ -26,7 +26,7 @@ export default function LoginPage() {
     const urlParams = new URLSearchParams(window.location.search);
     const oauthError = urlParams.get('error');
     if (oauthError === 'OAuthCallback') {
-      setError('Error en la autenticación con Google. Verifica tu configuración.');
+      setError(t("login.oauthError"));
     }
   }, []);
 
@@ -52,7 +52,7 @@ export default function LoginPage() {
     setIsLoading(false)
 
     if (result?.error) {
-      setError("Las credenciales son incorrectas. Por favor, inténtalo de nuevo.");
+      setError(t("login.credentialsError"));
     } else if (result?.ok) {
       router.push(`/${language}/dashboard`); // Redirigir al dashboard tras un login exitoso
     }
@@ -69,24 +69,24 @@ export default function LoginPage() {
     <AuthContainer
       imageSrc="/login.png"
       imageAlt="Ciervo meditando en la naturaleza"
-      title="¡Bienvenido de vuelta!"
-      subtitle="Accede a tu cuenta para continuar organizando tu vida"
+      title={t("login.title")}
+      subtitle={t("login.subtitle")}
     >
       <form onSubmit={handleSubmit} className="space-y-6">
         <div className="space-y-4">
           <AuthInput
-            label="Correo electrónico"
+            label={t("login.email")}
             type="email"
             name="email"
             value={formData.email}
             onChange={handleInputChange}
-            placeholder="tu@email.com"
+            placeholder={t("contact.emailPlaceholder")}
             icon={<Mail className="w-5 h-5" />}
             required
           />
           
           <AuthInput
-            label="Contraseña"
+            label={t("login.password")}
             type="password"
             name="password"
             value={formData.password}
@@ -105,23 +105,23 @@ export default function LoginPage() {
               type="checkbox" 
               className="rounded border-stone-300 text-stone-800 focus:ring-amber-200"
             />
-            Recordarme
+            {t("login.rememberMe")}
           </label>
           
           <Link 
             href="/forgot-password" 
             className="text-sm text-stone-600 hover:text-stone-800 transition-colors"
           >
-            ¿Olvidaste tu contraseña?
+            {t("login.forgotPassword")}
           </Link>
         </div>
 
         <div className="space-y-4">
           <AuthButton type="submit" isLoading={isLoading}>
-            {isLoading ? "Iniciando sesión..." : "Iniciar sesión"}
+            {isLoading ? t("login.signingIn") : t("login.signIn")}
           </AuthButton>
 
-          <AuthSeparator text="o continúa con" />
+          <AuthSeparator text={t("login.continueWith")} />
 
           <AuthButton 
             type="button" 
@@ -148,17 +148,17 @@ export default function LoginPage() {
               </svg>
             }
           >
-            Continuar con Google
+            {t("login.continueWithGoogle")}
           </AuthButton>
         </div>
 
         <div className="text-center text-sm text-stone-600">
-          ¿No tienes cuenta?{" "}
+          {t("login.noAccount")}{" "}
           <Link 
             href={`/${language}/register`} 
             className="font-medium text-stone-800 hover:text-emerald-600 transition-colors"
           >
-            Regístrate aquí
+            {t("login.registerHere")}
           </Link>
         </div>
       </form>

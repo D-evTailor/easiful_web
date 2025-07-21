@@ -12,9 +12,15 @@ import { useState } from "react"
 
 export default function Header() {
   const { data: session, status } = useSession()
-  const { language, setLanguage, t } = useLanguage()
+  const { language, t } = useLanguage()
   const pathname = usePathname()
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
+
+  const handleLanguageChange = (newLang: string) => {
+    const currentPath = pathname
+    const newPath = currentPath.replace(/^\/(es|en)/, `/${newLang}`)
+    window.location.href = newPath
+  }
 
   const navItems = [
     { href: "/", label: t("nav.home") },
@@ -67,8 +73,8 @@ export default function Header() {
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent>
-                <DropdownMenuItem onClick={() => setLanguage("es")}>🇪🇸 Español</DropdownMenuItem>
-                <DropdownMenuItem onClick={() => setLanguage("en")}>🇺🇸 English</DropdownMenuItem>
+                <DropdownMenuItem onClick={() => handleLanguageChange("es")}>{t("language.spanish")}</DropdownMenuItem>
+                <DropdownMenuItem onClick={() => handleLanguageChange("en")}>{t("language.english")}</DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
 
@@ -89,13 +95,13 @@ export default function Header() {
                   <DropdownMenuItem asChild>
                     <Link href={getLocalePath("/dashboard")}>
                       <LayoutDashboard className="mr-2 h-4 w-4" />
-                      <span>Dashboard</span>
+                      <span>{t("nav.dashboard")}</span>
                     </Link>
                   </DropdownMenuItem>
                   <DropdownMenuSeparator />
                   <DropdownMenuItem onClick={() => signOut({ callbackUrl: getLocalePath('/') })}>
                     <LogOut className="mr-2 h-4 w-4" />
-                    <span>Cerrar sesión</span>
+                    <span>{t("nav.logout")}</span>
                   </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
@@ -134,7 +140,7 @@ export default function Header() {
                   </Button>
                 ) : (
                    <Button asChild className="w-full" variant="secondary">
-                    <Link href={getLocalePath("/dashboard")} onClick={() => setIsMobileMenuOpen(false)}>Ir al Dashboard</Link>
+                    <Link href={getLocalePath("/dashboard")} onClick={() => setIsMobileMenuOpen(false)}>{t("nav.goToDashboard")}</Link>
                   </Button>
                 )}
               </div>
