@@ -23,15 +23,27 @@ export function useSubscription() {
         setError(null);
 
         try {
-            // 1. Call the 'createStripeCheckoutSession' cloud function
-            const createCheckoutSession = httpsCallable(functions, 'createStripeCheckoutSession');
-            const result: any = await createCheckoutSession({
-                priceId,
-                success_url: `${window.location.origin}/dashboard?session_id={CHECKOUT_SESSION_ID}`,
-                cancel_url: window.location.href, // Return to the pricing page on cancellation
+            // 1. Call our Next.js API route (temporary CORS workaround)
+            console.log("🛍️ Calling Next.js API route for checkout...");
+            const response = await fetch('/api/stripe/checkout', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    priceId,
+                    success_url: `${window.location.origin}/dashboard?session_id={CHECKOUT_SESSION_ID}`,
+                    cancel_url: window.location.href,
+                }),
             });
 
-            const { sessionId } = result.data;
+            if (!response.ok) {
+                const errorData = await response.json();
+                throw new Error(errorData.error || `HTTP error! status: ${response.status}`);
+            }
+
+            const result = await response.json();
+            const { sessionId } = result;
             if (!sessionId) {
                 throw new Error("Could not create a checkout session.");
             }

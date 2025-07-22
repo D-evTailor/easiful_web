@@ -4,8 +4,6 @@ import { LanguageProvider } from "@/lib/language-context";
 import Header from "@/components/header";
 import Footer from "@/components/footer";
 import CookieBanner from "@/components/cookie-banner";
-import { NextIntlClientProvider } from "next-intl";
-import { getMessages } from "next-intl/server";
 import Providers from "@/components/providers";
 
 const quicksand = Quicksand({
@@ -41,8 +39,6 @@ export default async function LocaleLayout({
   params,
 }: Props) {
   const { locale } = await params;
-  const messages = await getMessages();
-  
   // Validate locale
   const validLocale = locale === "es" || locale === "en" ? locale : "es";
 
@@ -50,16 +46,14 @@ export default async function LocaleLayout({
     <html lang={validLocale}>
       <body className={quicksand.className}>
         <Providers>
-          <NextIntlClientProvider messages={messages}>
-            <LanguageProvider initialLanguage={validLocale}>
-              <div className="min-h-screen bg-gradient-to-br from-amber-50 via-stone-50 to-emerald-50">
-                <Header />
-                <main>{children}</main>
-                <Footer />
-              </div>
-            </LanguageProvider>
-          </NextIntlClientProvider>
-          <CookieBanner />
+          <LanguageProvider initialLanguage={validLocale}>
+            <div className="min-h-screen bg-gradient-to-br from-amber-50 via-stone-50 to-emerald-50">
+              <Header />
+              <main>{children}</main>
+              <Footer />
+            </div>
+            <CookieBanner />
+          </LanguageProvider>
         </Providers>
       </body>
     </html>

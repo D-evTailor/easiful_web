@@ -1,7 +1,8 @@
 "use client"
 
-import { useState, useEffect, FC } from "react"
+import { useState, useEffect } from "react"
 import Link from "next/link"
+import { useLanguage } from "@/lib/language-context"
 import { Button } from "@/components/ui/button"
 import {
   Dialog,
@@ -20,7 +21,8 @@ type ConsentPreferences = {
   preferences: boolean;
 };
 
-const CookieBanner: FC = () => {
+const CookieBanner = () => {
+  const { t } = useLanguage();
   const [showBanner, setShowBanner] = useState(false);
   const [showSettings, setShowSettings] = useState(false);
   const [consent, setConsent] = useState<ConsentPreferences>({
@@ -65,21 +67,21 @@ const CookieBanner: FC = () => {
         <div className="container mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
           <div className="text-sm text-stone-700">
             <p>
-              Utilizamos cookies para mejorar tu experiencia. Al hacer clic en "Aceptar todas", aceptas nuestro uso de cookies. Consulta nuestra{" "}
+              {t("cookies.message")}{" "}
               <Link href="/legal/cookies" className="font-semibold underline hover:text-stone-900">
-                Política de Cookies
+                {t("cookies.policy")}
               </Link>
               .
             </p>
           </div>
           <div className="flex-shrink-0 flex gap-2">
             <Button variant="outline" onClick={() => setShowSettings(true)}>
-              Configurar
+              {t("cookies.configure")}
             </Button>
             <Button variant="outline" onClick={handleRejectAll}>
-              Rechazar todas
+              {t("cookies.rejectAll")}
             </Button>
-            <Button onClick={handleAcceptAll}>Aceptar todas</Button>
+            <Button onClick={handleAcceptAll}>{t("cookies.acceptAll")}</Button>
           </div>
         </div>
       </div>
@@ -88,19 +90,19 @@ const CookieBanner: FC = () => {
       <Dialog open={showSettings} onOpenChange={setShowSettings}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Configuración de Cookies</DialogTitle>
+            <DialogTitle>{t("cookies.settings.title")}</DialogTitle>
             <DialogDescription>
-              Gestiona tus preferencias de cookies. Puedes habilitar o deshabilitar categorías específicas a continuación.
+              {t("cookies.settings.description")}
             </DialogDescription>
           </DialogHeader>
           <div className="space-y-4 py-4">
             <div className="flex items-center justify-between rounded-lg border p-4">
               <div className="space-y-0.5">
                 <Label htmlFor="necessary-cookies" className="font-semibold">
-                  Cookies Necesarias
+                  {t("cookies.necessary.title")}
                 </Label>
                 <p className="text-sm text-stone-500">
-                  Estas cookies son esenciales para que el sitio web funcione y no se pueden desactivar.
+                  {t("cookies.necessary.description")}
                 </p>
               </div>
               <Switch id="necessary-cookies" checked disabled />
@@ -108,10 +110,10 @@ const CookieBanner: FC = () => {
             <div className="flex items-center justify-between rounded-lg border p-4">
               <div className="space-y-0.5">
                 <Label htmlFor="analytics-cookies" className="font-semibold">
-                  Cookies de Análisis
+                  {t("cookies.analytics.title")}
                 </Label>
                 <p className="text-sm text-stone-500">
-                  Nos ayudan a entender cómo los visitantes interactúan con el sitio web.
+                  {t("cookies.analytics.description")}
                 </p>
               </div>
               <Switch
@@ -123,10 +125,10 @@ const CookieBanner: FC = () => {
             <div className="flex items-center justify-between rounded-lg border p-4">
               <div className="space-y-0.5">
                 <Label htmlFor="preferences-cookies" className="font-semibold">
-                  Cookies de Preferencias
+                  {t("cookies.preferences.title")}
                 </Label>
                 <p className="text-sm text-stone-500">
-                  Permiten recordar información que cambia el aspecto o comportamiento de la web.
+                  {t("cookies.preferences.description")}
                 </p>
               </div>
               <Switch
@@ -137,8 +139,8 @@ const CookieBanner: FC = () => {
             </div>
           </div>
           <DialogFooter>
-            <Button variant="outline" onClick={handleRejectAll}>Rechazar todas</Button>
-            <Button onClick={handleSavePreferences}>Guardar Preferencias</Button>
+            <Button variant="outline" onClick={handleRejectAll}>{t("cookies.rejectAll")}</Button>
+            <Button onClick={handleSavePreferences}>{t("cookies.savePreferences")}</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>

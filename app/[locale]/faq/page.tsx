@@ -1,37 +1,41 @@
+"use client"
+
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
-import { FC } from "react";
+import { useLanguage } from "@/lib/language-context";
 
-const faqItems = [
-  {
-    question: "¿Qué es Easiful?",
-    answer: "Easiful es una aplicación móvil diseñada para simplificar, organizar y motivar a la hora de realizar tareas del hogar y planificar viajes."
-  },
-  {
-    question: "¿La aplicación es gratuita?",
-    answer: "Sí, puedes descargar y usar Easiful de forma gratuita con anuncios. También ofrecemos una suscripción premium sin anuncios y con funciones extra por 3.5€ al mes o un pago único de 12€ al año."
-  },
-  {
-    question: "¿En qué plataformas está disponible?",
-    answer: "Actualmente, Easiful está disponible para dispositivos iOS en la App Store y para dispositivos Android en la Google Play Store."
-  },
-  {
-    question: "¿Cómo puedo proteger mis datos?",
-    answer: "Tu privacidad es nuestra prioridad. Todos tus datos se almacenan de forma segura y cifrada. Puedes consultar nuestra Política de Privacidad para obtener más detalles sobre cómo protegemos tu información."
-  },
-  {
-    question: "¿Cómo puedo contactar con el soporte técnico?",
-    answer: "Si tienes algún problema o sugerencia, puedes contactarnos a través del formulario de contacto de nuestra web o enviando un correo electrónico a easiful@dev-tailor.com."
-  },
-  {
-    question: "¿Puedo usar la aplicación en varios dispositivos?",
-    answer: "Sí, tu cuenta de Easiful se sincroniza en la nube, por lo que puedes acceder a tu información desde cualquier dispositivo compatible donde hayas iniciado sesión."
-  }
-];
+const FAQPage = () => {
+  const { t } = useLanguage();
 
-const FAQPage: FC = () => {
+  const faqItems = [
+    {
+      question: t("faq.whatIsEasiful"),
+      answer: t("faq.whatIsEasifulAnswer")
+    },
+    {
+      question: t("faq.isFree"),
+      answer: t("faq.isFreeAnswer")
+    },
+    {
+      question: t("faq.platforms"),
+      answer: t("faq.platformsAnswer")
+    },
+    {
+      question: t("faq.dataProtection"),
+      answer: t("faq.dataProtectionAnswer")
+    },
+    {
+      question: t("faq.support"),
+      answer: t("faq.supportAnswer")
+    },
+    {
+      question: t("faq.multipleDevices"),
+      answer: t("faq.multipleDevicesAnswer")
+    }
+  ];
+
   return (
     <div className="container mx-auto px-4 py-12">
-      <h1 className="text-3xl font-bold text-center mb-8 text-stone-800">Preguntas Frecuentes (FAQ)</h1>
+      <h1 className="text-3xl font-bold text-center mb-8 text-stone-800">{t("faq.title")}</h1>
       <div className="max-w-3xl mx-auto">
         <Accordion type="single" collapsible className="w-full">
           {faqItems.map((item, index) => (

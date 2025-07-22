@@ -14,7 +14,7 @@ import { AuthButton } from "@/components/auth/auth-button"
 import { AuthSeparator } from "@/components/auth/auth-separator"
 
 export default function RegisterPage() {
-  const { language } = useLanguage()
+  const { language, t } = useLanguage()
   const router = useRouter()
   const [formData, setFormData] = useState({
     name: "",
@@ -40,12 +40,12 @@ export default function RegisterPage() {
     setError(null)
 
     if (!acceptTerms) {
-      setError("Debes aceptar los términos y condiciones.")
+      setError(t("register.termsRequired"))
       return
     }
     
     if (formData.password !== formData.confirmPassword) {
-      setError("Las contraseñas no coinciden.")
+      setError(t("register.passwordsDontMatch"))
       return
     }
 
@@ -64,16 +64,16 @@ export default function RegisterPage() {
 
       if (result?.error) {
         // Si la creación en Firebase funcionó pero el login de NextAuth falla
-        setError("Error al iniciar sesión después del registro.");
+        setError(t("register.loginError"));
       } else if (result?.ok) {
         router.push(`/${language}/dashboard`);
       }
     } catch (error: any) {
       // Capturar errores de Firebase (ej: email ya en uso)
       if (error.code === 'auth/email-already-in-use') {
-        setError('Este correo electrónico ya está registrado.');
+        setError(t('register.emailAlreadyExists'));
       } else {
-        setError('Ha ocurrido un error durante el registro.');
+        setError(t('register.registrationError'));
       }
     } finally {
       setIsLoading(false)
@@ -88,45 +88,45 @@ export default function RegisterPage() {
     <AuthContainer
       imageSrc="/login.png"
       imageAlt="Ciervo meditando en la naturaleza"
-      title="¡Únete a Easiful!"
-      subtitle="Crea tu cuenta y comienza a organizar tu vida hoy mismo"
+      title={t("register.title")}
+      subtitle={t("register.subtitle")}
     >
       <form onSubmit={handleSubmit} className="space-y-5">
         <div className="space-y-4">
           <AuthInput
-            label="Nombre completo"
+            label={t("register.fullName")}
             type="text"
             name="name"
             value={formData.name}
             onChange={handleInputChange}
-            placeholder="Tu nombre completo"
+            placeholder={t("register.fullNamePlaceholder")}
             icon={<User className="w-5 h-5" />}
             required
           />
           
           <AuthInput
-            label="Correo electrónico"
+            label={t("login.email")}
             type="email"
             name="email"
             value={formData.email}
             onChange={handleInputChange}
-            placeholder="tu@email.com"
+            placeholder={t("contact.emailPlaceholder")}
             icon={<Mail className="w-5 h-5" />}
             required
           />
 
           <AuthInput
-            label="Teléfono (opcional)"
+            label={t("register.phone")}
             type="tel"
             name="phone"
             value={formData.phone}
             onChange={handleInputChange}
-            placeholder="+34 600 000 000"
+            placeholder={t("register.phonePlaceholder")}
             icon={<Phone className="w-5 h-5" />}
           />
           
           <AuthInput
-            label="Contraseña"
+            label={t("login.password")}
             type="password"
             name="password"
             value={formData.password}
@@ -137,7 +137,7 @@ export default function RegisterPage() {
           />
 
           <AuthInput
-            label="Confirmar contraseña"
+            label={t("register.confirmPassword")}
             type="password"
             name="confirmPassword"
             value={formData.confirmPassword}
@@ -160,13 +160,13 @@ export default function RegisterPage() {
               required
             />
             <span>
-              Acepto los{" "}
+              {t("register.acceptTerms")}{" "}
               <Link href={`/${language}/legal/terminos`} className="text-stone-800 hover:text-emerald-600 transition-colors underline">
-                términos y condiciones
+                {t("register.termsAndConditions")}
               </Link>{" "}
-              y la{" "}
+              {t("register.and")}{" "}
               <Link href={`/${language}/legal/privacidad`} className="text-stone-800 hover:text-emerald-600 transition-colors underline">
-                política de privacidad
+                {t("register.privacyPolicy")}
               </Link>
             </span>
           </label>
@@ -174,10 +174,10 @@ export default function RegisterPage() {
 
         <div className="space-y-4">
           <AuthButton type="submit" isLoading={isLoading} disabled={!acceptTerms}>
-            {isLoading ? "Creando cuenta..." : "Crear cuenta"}
+            {isLoading ? t("register.creatingAccount") : t("register.createAccount")}
           </AuthButton>
 
-          <AuthSeparator text="o regístrate con" />
+          <AuthSeparator text={t("register.registerWith")} />
 
           <AuthButton 
             type="button" 
@@ -204,17 +204,17 @@ export default function RegisterPage() {
               </svg>
             }
           >
-            Continuar con Google
+            {t("register.registerWithGoogle")}
           </AuthButton>
         </div>
 
         <div className="text-center text-sm text-stone-600">
-          ¿Ya tienes cuenta?{" "}
+          {t("register.alreadyHaveAccount")}{" "}
           <Link 
             href={`/${language}/login`}
             className="font-medium text-stone-800 hover:text-emerald-600 transition-colors"
           >
-            Inicia sesión aquí
+            {t("register.signInHere")}
           </Link>
         </div>
       </form>

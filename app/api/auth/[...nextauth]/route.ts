@@ -2,7 +2,8 @@ import NextAuth from "next-auth";
 import GoogleProvider from "next-auth/providers/google";
 import CredentialsProvider from "next-auth/providers/credentials";
 import { signInWithEmailAndPassword } from "firebase/auth";
-import { adminDb } from "@/lib/firebase-admin";
+import { getFirestore } from "firebase-admin/firestore";
+import { getAdminApp } from "@/lib/firebase-admin-config";
 import { auth } from "@/lib/firebase-config";
 
 // Google Client ID is loaded from environment variables
@@ -64,41 +65,41 @@ export const authOptions = {
         session.user.id = token.id;
         
         // Only try to fetch user data if Firebase Admin is available
-        if (adminDb) {
-          try {
-            const userRef = adminDb.collection("users").doc(token.id as string);
-            const userDoc = await userRef.get();
+        try {
+          const adminApp = getAdminApp();
+          const adminDb = getFirestore(adminApp);
+          const userRef = adminDb.collection("users").doc(token.id as string);
+          const userDoc = await userRef.get();
 
-            if (userDoc.exists) {
-              const userData = userDoc.data();
-              // Attach subscription data to the session user object
-              session.user.subscription = userData?.subscription || null;
-            } else {
-              // Create user document if it doesn't exist
-              await userRef.set({
-                email: session.user.email,
-                name: session.user.name,
-                image: session.user.image,
-                createdAt: new Date(),
-                subscription: {
-                  planId: 'free',
-                  status: 'active',
-                  startDate: new Date(),
-                  endDate: null
-                }
-              });
-              session.user.subscription = {
+          if (userDoc.exists) {
+            const userData = userDoc.data();
+            // Attach subscription data to the session user object
+            session.user.subscription = userData?.subscription || null;
+          } else {
+            // Create user document if it doesn't exist
+            await userRef.set({
+              email: session.user.email,
+              name: session.user.name,
+              image: session.user.image,
+              createdAt: new Date(),
+              subscription: {
                 planId: 'free',
                 status: 'active',
                 startDate: new Date(),
                 endDate: null
-              };
-            }
-          } catch (error) {
-            console.error("Error fetching user data:", error);
-            // Don't fail the session if we can't fetch user data
-            // Continue with the session without subscription data
+              }
+            });
+            session.user.subscription = {
+              planId: 'free',
+              status: 'active',
+              startDate: new Date(),
+              endDate: null
+            };
           }
+        } catch (error) {
+          console.error("Error fetching user data:", error);
+          // Don't fail the session if we can't fetch user data
+          // Continue with the session without subscription data
         }
       }
       return session;
