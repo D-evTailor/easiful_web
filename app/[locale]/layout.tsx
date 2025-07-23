@@ -43,19 +43,15 @@ export default async function LocaleLayout({
   const validLocale = locale === "es" || locale === "en" ? locale : "es";
 
   return (
-    <html lang={validLocale}>
-      <body className={quicksand.className}>
-        <Providers>
-          <LanguageProvider initialLanguage={validLocale}>
-            <div className="min-h-screen bg-gradient-to-br from-amber-50 via-stone-50 to-emerald-50">
-              <Header />
-              <main>{children}</main>
-              <Footer />
-            </div>
-            <CookieBanner />
-          </LanguageProvider>
-        </Providers>
-      </body>
-    </html>
+    <Providers>
+      <LanguageProvider initialLanguage={validLocale}>
+        <div className="min-h-screen bg-gradient-to-br from-amber-50 via-stone-50 to-emerald-50">
+          <Header />
+          <main>{children}</main>
+          <Footer />
+        </div>
+        <CookieBanner />
+      </LanguageProvider>
+    </Providers>
   );
 }

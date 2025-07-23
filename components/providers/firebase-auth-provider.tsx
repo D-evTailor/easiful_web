@@ -19,6 +19,7 @@ export function FirebaseAuthProvider({ children }: FirebaseAuthProviderProps) {
   useEffect(() => {
     const syncFirebaseAuth = async () => {
       try {
+        console.log(`🔄 FirebaseAuthProvider - Status: ${status}, Session:`, session);
         if (status === "authenticated" && session?.user?.id) {
           // El usuario está autenticado en NextAuth
           console.log("Sincronizando autenticación con Firebase...");
