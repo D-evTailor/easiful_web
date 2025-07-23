@@ -83,33 +83,13 @@ export const en = {
   "login.continueWith": "or continue with",
   "login.continueWithGoogle": "Continue with Google",
   "login.noAccount": "Don't have an account?",
-  "login.registerHere": "Register here",
+  "login.downloadToRegister": "Download the App to Sign up!",
+  "login.userNotFound": "You are not part of the Easiful family. Please download the App to sign up.",
+  "login.registerHere": "Sign up here", // Renombrar para mayor claridad interna
   "login.credentialsError": "Invalid credentials. Please try again.",
   "login.oauthError": "Error with Google authentication. Please check your configuration.",
 
-  // Register page
-  "register.title": "Join Easiful!",
-  "register.subtitle": "Create your account and start organizing your life today",
-  "register.fullName": "Full name",
-  "register.fullNamePlaceholder": "Your full name",
-  "register.phone": "Phone (optional)",
-  "register.phonePlaceholder": "+1 555 000 000",
-  "register.confirmPassword": "Confirm password",
-  "register.acceptTerms": "I accept the",
-  "register.termsAndConditions": "terms and conditions",
-  "register.and": "and the",
-  "register.privacyPolicy": "privacy policy",
-  "register.creatingAccount": "Creating account...",
-  "register.createAccount": "Create account",
-  "register.registerWith": "or register with",
-  "register.registerWithGoogle": "Register with Google",
-  "register.termsRequired": "You must accept the terms and conditions.",
-  "register.passwordsDontMatch": "Passwords don't match.",
-  "register.emailAlreadyExists": "This email is already registered.",
-  "register.registrationError": "An error occurred during registration.",
-  "register.loginError": "Error signing in after registration.",
-  "register.alreadyHaveAccount": "Already have an account?",
-  "register.signInHere": "Sign in here",
+
 
   // Dashboard page
   "dashboard.title": "Billing Dashboard",
