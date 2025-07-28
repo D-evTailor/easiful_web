@@ -17,6 +17,13 @@ const nextConfig = {
         { message: /Invalid source map/ }
       ];
     }
+    
+    // Exclude functions directory from webpack compilation
+    config.externals = config.externals || [];
+    config.externals.push({
+      './functions': 'commonjs ./functions'
+    });
+    
     return config;
   },
   

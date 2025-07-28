@@ -1,0 +1,12 @@
+# Exclude Firebase Functions from Vercel build
+functions/
+functions/**
+
+# Exclude test files
+test-results/
+playwright-report/
+
+# Exclude development files
+*.log
+.env.local
+.env.development 
