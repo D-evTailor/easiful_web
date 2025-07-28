@@ -33,15 +33,21 @@ export function AuthContainer({
         className="object-cover z-0"
         priority
       />
-      <div className="absolute inset-0 bg-black/20 z-10" />
-      {/* Formulario en la mitad derecha, ocupando toda la mitad */}
-      <div className="absolute right-0 top-0 h-full w-1/2 bg-stone-50/50 dark:bg-stone-900/50 backdrop-blur-md z-20 flex items-center justify-center p-8">
-        <div className="w-full max-w-md space-y-8">
-          <div className="text-center space-y-4">
-            <h1 className="text-3xl lg:text-4xl font-bold text-stone-900 dark:text-stone-100">{title}</h1>
-            <p className="text-stone-700 dark:text-stone-300 text-lg">{subtitle}</p>
+      <div className="absolute inset-0 bg-black/30 md:bg-black/20 z-10" />
+      
+      {/* Formulario - Responsive Layout */}
+      <div className="absolute inset-0 z-20 flex items-center justify-center p-4 md:p-8">
+        {/* Mobile: Full screen overlay, Desktop: Right half */}
+        <div className="w-full max-w-md md:max-w-lg lg:max-w-md md:ml-auto md:mr-0 md:w-1/2 md:h-full md:flex md:items-center md:justify-center">
+          <div className="w-full bg-white/95 md:bg-stone-50/90 backdrop-blur-md rounded-2xl md:rounded-none p-6 md:p-8 shadow-2xl md:shadow-none">
+            <div className="text-center space-y-3 md:space-y-4">
+              <h1 className="text-2xl md:text-3xl lg:text-4xl font-bold text-stone-900">{title}</h1>
+              <p className="text-stone-700 text-base md:text-lg">{subtitle}</p>
+            </div>
+            <div className="mt-6 md:mt-8">
+              {children}
+            </div>
           </div>
-          {children}
         </div>
       </div>
     </div>

@@ -22,25 +22,25 @@ export default async function PricingPage({ params }: { params: Promise<{ locale
   }
 
   return (
-    <div className="container mx-auto px-4 py-12">
+    <div className="container mx-auto px-4 py-8 md:py-12">
       <div className="flex flex-col items-center">
         <header className="relative w-full text-center max-w-3xl mx-auto">
-          <h1 className="text-4xl font-bold text-brand">
+          <h1 className="text-2xl md:text-4xl font-bold text-brand">
             {t("pricing.title")}
           </h1>
-          <p className="text-stone-600 mt-3 text-lg">
+          <p className="text-stone-600 mt-2 md:mt-3 text-base md:text-lg">
             {t("pricing.subtitle").replace("{name}", session?.user?.name || t("dashboard.user"))}
           </p>
           <div className="absolute top-0 left-0">
-            <Button asChild variant="ghost" size="icon" className="transition-transform hover:scale-110">
+            <Button asChild variant="ghost" size="icon" className="transition-transform hover:scale-110 h-8 w-8 md:h-10 md:w-10">
               <Link href={`/${locale}/dashboard`}>
-                <ArrowLeft className="h-6 w-6" />
+                <ArrowLeft className="h-4 w-4 md:h-6 md:w-6" />
               </Link>
             </Button>
           </div>
         </header>
 
-        <div className="mt-16 w-full">
+        <div className="mt-8 md:mt-16 w-full">
           <PricingClient />
         </div>
 

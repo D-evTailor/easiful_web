@@ -10,7 +10,7 @@ export function DownloadButton() {
   }
 
   return (
-    <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
+    <div className="flex flex-col sm:flex-row gap-3 md:gap-4 justify-center items-center">
       {/* Google Play Button */}
       <button
         onClick={handleDownload}
@@ -19,9 +19,9 @@ export function DownloadButton() {
         <Image
           src="/google.png"
           alt={language === "es" ? "Disponible en Google Play" : "Get it on Google Play"}
-          width={200}
-          height={60}
-          className="cursor-pointer"
+          width={160}
+          height={48}
+          className="cursor-pointer md:w-[200px] md:h-[60px]"
           style={{ width: 'auto', height: 'auto' }}
         />
       </button>
@@ -34,9 +34,9 @@ export function DownloadButton() {
         <Image
           src="/apple.png"
           alt="Download on the App Store"
-          width={200}
-          height={60}
-          className="cursor-pointer"
+          width={160}
+          height={48}
+          className="cursor-pointer md:w-[200px] md:h-[60px]"
           style={{ width: 'auto', height: 'auto' }}
         />
       </button>

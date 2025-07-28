@@ -27,31 +27,31 @@ export default function BillingCard({ subscription }: BillingCardProps) {
 
   return (
     <section>
-      <h2 className="text-2xl font-semibold text-stone-700 mb-4">{t("dashboard.subscription.title")}</h2>
+      <h2 className="text-lg md:text-2xl font-semibold text-stone-700 mb-3 md:mb-4">{t("dashboard.subscription.title")}</h2>
       <Card className="shadow-md">
-        <CardHeader>
-          <CardTitle className="flex items-center justify-between">
+        <CardHeader className="p-4 md:p-6">
+          <CardTitle className="flex items-center justify-between text-base md:text-lg">
             <span>{subscription.plan}</span>
             <span 
-              className={`px-3 py-1 text-sm font-medium rounded-full ${statusClasses[subscription.status as keyof typeof statusClasses]}`}
+              className={`px-2 md:px-3 py-1 text-xs md:text-sm font-medium rounded-full ${statusClasses[subscription.status as keyof typeof statusClasses]}`}
             >
               {subscription.status}
             </span>
           </CardTitle>
-          <CardDescription>
+          <CardDescription className="text-sm md:text-base">
             {subscription.price}
           </CardDescription>
         </CardHeader>
-        <CardContent>
-          <p className="text-stone-600">
+        <CardContent className="p-4 md:p-6">
+          <p className="text-stone-600 text-sm md:text-base">
             {subscription.status === t("status.active")
               ? t("dashboard.subscription.renewal").replace("{date}", subscription.nextPayment)
               : t("dashboard.subscription.inactive")
             }
           </p>
         </CardContent>
-        <CardFooter className="border-t pt-6">
-          <Button asChild>
+        <CardFooter className="border-t pt-4 md:pt-6 p-4 md:p-6">
+          <Button asChild className="text-sm md:text-base">
             <Link href={`/${language}/pricing`}>{t("dashboard.subscription.manage")}</Link>
           </Button>
         </CardFooter>

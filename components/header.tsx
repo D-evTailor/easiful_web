@@ -35,9 +35,9 @@ export default function Header() {
 
   return (
     <header className="sticky top-0 z-50 bg-white/90 backdrop-blur-md border-b border-stone-200 shadow-sm">
-      <div className="container mx-auto px-4 py-4">
+      <div className="container mx-auto px-4 py-3 md:py-4">
         <nav className="flex items-center justify-between">
-          <Link href={getLocalePath("/")} className="text-2xl font-bold text-stone-800 hover:text-emerald-600 transition-colors">
+          <Link href={getLocalePath("/")} className="text-xl md:text-2xl font-bold text-stone-800 hover:text-emerald-600 transition-colors">
             Easiful
           </Link>
 
@@ -63,13 +63,13 @@ export default function Header() {
             )}
           </div>
 
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-2 md:gap-4">
             {/* Language Selector */}
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button variant="outline" size="sm" className="flex items-center gap-2 bg-transparent border-stone-300">
-                  <Globe className="w-4 h-4" />
-                  {language.toUpperCase()}
+                <Button variant="outline" size="sm" className="flex items-center gap-1 md:gap-2 bg-transparent border-stone-300 px-2 md:px-3">
+                  <Globe className="w-3 h-3 md:w-4 md:h-4" />
+                  <span className="text-xs md:text-sm">{language.toUpperCase()}</span>
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent>
@@ -82,11 +82,11 @@ export default function Header() {
             {status === "authenticated" && (
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <Button variant="ghost" className="relative h-9 w-9 rounded-full">
-                    <Avatar className="w-9 h-9 border-2 border-stone-200 group-hover:border-emerald-500 transition-colors">
+                  <Button variant="ghost" className="relative h-8 w-8 md:h-9 md:w-9 rounded-full">
+                    <Avatar className="w-8 h-8 md:w-9 md:h-9 border-2 border-stone-200 group-hover:border-emerald-500 transition-colors">
                       <AvatarImage src={session.user?.image || undefined} alt="User avatar" />
                       <AvatarFallback>
-                        <User className="w-5 h-5 text-stone-600" />
+                        <User className="w-4 h-4 md:w-5 md:h-5 text-stone-600" />
                       </AvatarFallback>
                     </Avatar>
                   </Button>
@@ -111,10 +111,10 @@ export default function Header() {
             <Button
               variant="ghost"
               size="sm"
-              className="md:hidden"
+              className="md:hidden p-2"
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
             >
-              {isMobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+              {isMobileMenuOpen ? <X className="w-4 h-4" /> : <Menu className="w-4 h-4" />}
             </Button>
           </div>
         </nav>

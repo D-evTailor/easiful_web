@@ -29,8 +29,8 @@ export default function HomePage() {
       <section className="container mx-auto px-4 py-16 md:py-24">
         <div className="grid lg:grid-cols-2 gap-12 items-center">
           <div className="text-center lg:text-left animate-fade-in">
-            <h1 className="text-6xl md:text-8xl font-bold text-stone-800 mb-6 leading-tight">{t("home.title")}</h1>
-            <div className="text-2xl md:text-3xl text-stone-600 mb-8 leading-relaxed font-bold">
+            <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl xl:text-8xl font-bold text-stone-800 mb-4 md:mb-6 leading-tight">{t("home.title")}</h1>
+            <div className="text-lg sm:text-xl md:text-2xl lg:text-3xl text-stone-600 mb-6 md:mb-8 leading-relaxed font-bold">
               {language === "es" ? "Organiza tu" : "Organize your"}<FlipWords words={flipWords} duration={2000} className="text-emerald-600 font-bold" />
             </div>
           </div>

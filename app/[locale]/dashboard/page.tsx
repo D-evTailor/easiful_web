@@ -42,29 +42,29 @@ export default async function DashboardPage({ params }: { params: Promise<{ loca
   const invoices: Invoice[] = []
 
   return (
-    <div className="container mx-auto px-4 py-12">
-      <div className="space-y-8">
+    <div className="container mx-auto px-4 py-8 md:py-12">
+      <div className="space-y-6 md:space-y-8">
         <header>
-          <h1 className="text-3xl font-bold text-brand">
+          <h1 className="text-2xl md:text-3xl font-bold text-brand">
             {t("dashboard.title")}
           </h1>
-          <p className="text-stone-600 mt-2">
+          <p className="text-stone-600 mt-1 md:mt-2 text-sm md:text-base">
             {t("dashboard.welcome").replace("{name}", session?.user?.name || t("dashboard.user"))}
           </p>
         </header>
 
-        <div className="space-y-12">
+        <div className="space-y-8 md:space-y-12">
           <BillingCard subscription={subscriptionForCard} />
           
           {/* --- Feature Gating Example --- */}
           {!isPremium && (
-            <div className="p-6 bg-yellow-50 border border-yellow-200 rounded-lg text-center">
-              <Lock className="mx-auto h-8 w-8 text-yellow-500 mb-2" />
-              <h3 className="text-lg font-semibold text-yellow-800">{t("dashboard.premium.title")}</h3>
-              <p className="text-yellow-700">
+            <div className="p-4 md:p-6 bg-yellow-50 border border-yellow-200 rounded-lg text-center">
+              <Lock className="mx-auto h-6 w-6 md:h-8 md:w-8 text-yellow-500 mb-2" />
+              <h3 className="text-base md:text-lg font-semibold text-yellow-800">{t("dashboard.premium.title")}</h3>
+              <p className="text-yellow-700 text-sm md:text-base mt-2">
                 {t("dashboard.premium.description")}
               </p>
-              <Button asChild className="mt-4 bg-brand hover:bg-brand/90">
+              <Button asChild className="mt-3 md:mt-4 bg-brand hover:bg-brand/90 text-sm md:text-base">
                 <Link href={`/${locale}/pricing`}>{t("dashboard.premium.upgrade")}</Link>
               </Button>
             </div>

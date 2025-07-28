@@ -90,7 +90,7 @@ export default function ContactPage() {
   }
 
   return (
-    <div className="min-h-screen py-16 md:py-24 relative overflow-hidden">
+    <div className="min-h-screen py-8 md:py-16 lg:py-24 relative overflow-hidden">
       {/* Organic Background */}
       <div className="absolute inset-0 -z-10">
         <div className="absolute top-10 right-20 w-64 h-64 bg-emerald-100/20 rounded-full blur-3xl"></div>
@@ -98,19 +98,19 @@ export default function ContactPage() {
       </div>
 
       <div className="container mx-auto px-4 max-w-2xl relative">
-        <div className="text-center mb-16 animate-fade-in">
-          <h1 className="text-4xl md:text-5xl font-bold text-stone-800 mb-6">{t("contact.title")}</h1>
-          <p className="text-xl text-stone-600 leading-relaxed">{t("contact.subtitle")}</p>
+        <div className="text-center mb-8 md:mb-16 animate-fade-in">
+          <h1 className="text-2xl md:text-4xl lg:text-5xl font-bold text-stone-800 mb-4 md:mb-6">{t("contact.title")}</h1>
+          <p className="text-base md:text-xl text-stone-600 leading-relaxed">{t("contact.subtitle")}</p>
         </div>
 
         <Card className="bg-white/80 backdrop-blur-sm border-stone-200/50 rounded-3xl shadow-2xl animate-slide-up">
-          <CardHeader className="text-center pb-6">
-            <CardTitle className="text-2xl text-stone-800 flex items-center justify-center gap-3">
-              <MessageCircle className="w-6 h-6 text-emerald-600" />
+          <CardHeader className="text-center pb-4 md:pb-6 p-4 md:p-6">
+            <CardTitle className="text-lg md:text-2xl text-stone-800 flex items-center justify-center gap-2 md:gap-3">
+              <MessageCircle className="w-5 h-5 md:w-6 md:h-6 text-emerald-600" />
               {t("contact.title")}
             </CardTitle>
           </CardHeader>
-          <CardContent className="p-8">
+          <CardContent className="p-4 md:p-8">
             {isSubmitted ? (
               <div className="text-center py-12">
                 <div className="w-20 h-20 bg-emerald-100 rounded-full flex items-center justify-center mx-auto mb-6">

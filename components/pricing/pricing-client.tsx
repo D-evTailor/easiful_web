@@ -69,7 +69,7 @@ export default function PricingClient() {
   const plans = getPlans(t);
   
   return (
-    <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-5xl mx-auto">
+    <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8 max-w-5xl mx-auto">
       {plans.map((plan: any) => {
         const isCurrentPlan = currentPlanId === plan.priceId
         return (
@@ -80,32 +80,32 @@ export default function PricingClient() {
                 isCurrentPlan && "border-2 border-brand ring-4 ring-brand/20"
             )}
           >
-            <CardHeader className="text-center">
-              <CardTitle className="text-2xl font-bold">{plan.name}</CardTitle>
-              <CardDescription className="text-4xl font-extrabold text-brand">
-                {plan.price}<span className="text-lg font-medium text-stone-500">{plan.period}</span>
+            <CardHeader className="text-center p-4 md:p-6">
+              <CardTitle className="text-lg md:text-2xl font-bold">{plan.name}</CardTitle>
+              <CardDescription className="text-2xl md:text-4xl font-extrabold text-brand">
+                {plan.price}<span className="text-sm md:text-lg font-medium text-stone-500">{plan.period}</span>
               </CardDescription>
             </CardHeader>
-            <CardContent className="flex-grow">
-              <ul className="space-y-3">
+            <CardContent className="flex-grow p-4 md:p-6">
+              <ul className="space-y-2 md:space-y-3">
                 {Array.isArray(plan.features) && plan.features.map((feature: string) => (
-                  <li key={feature} className="flex items-center gap-3">
-                    <CheckCircle className="w-5 h-5 text-green-500" />
-                    <span className="text-stone-700">{feature}</span>
+                  <li key={feature} className="flex items-start gap-2 md:gap-3">
+                    <CheckCircle className="w-4 h-4 md:w-5 md:h-5 text-green-500 mt-0.5 flex-shrink-0" />
+                    <span className="text-sm md:text-base text-stone-700">{feature}</span>
                   </li>
                 ))}
               </ul>
             </CardContent>
-            <CardFooter>
+            <CardFooter className="p-4 md:p-6">
               {plan.priceId === "free" ? (
-                <Button variant="outline" className="w-full" disabled>
+                <Button variant="outline" className="w-full text-sm md:text-base" disabled>
                   {t("pricing.currentPlan")}
                 </Button>
               ) : (
                 <Button
                   onClick={() => handleUpgrade(plan.priceId)}
                   disabled={isLoading || isCurrentPlan}
-                  className="w-full bg-brand hover:bg-brand/90"
+                  className="w-full bg-brand hover:bg-brand/90 text-sm md:text-base"
                 >
                   {isLoading ? t("pricing.processing") : (isCurrentPlan ? t("pricing.currentPlan") : t("pricing.subscribe"))}
                 </Button>

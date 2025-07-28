@@ -34,16 +34,16 @@ const FAQPage = () => {
   ];
 
   return (
-    <div className="container mx-auto px-4 py-12">
-      <h1 className="text-3xl font-bold text-center mb-8 text-stone-800">{t("faq.title")}</h1>
+    <div className="container mx-auto px-4 py-8 md:py-12">
+      <h1 className="text-2xl md:text-3xl font-bold text-center mb-6 md:mb-8 text-stone-800">{t("faq.title")}</h1>
       <div className="max-w-3xl mx-auto">
         <Accordion type="single" collapsible className="w-full">
           {faqItems.map((item, index) => (
             <AccordionItem value={`item-${index}`} key={index}>
-              <AccordionTrigger className="text-lg font-semibold text-left">
+              <AccordionTrigger className="text-base md:text-lg font-semibold text-left">
                 {item.question}
               </AccordionTrigger>
-              <AccordionContent className="text-base text-stone-600">
+              <AccordionContent className="text-sm md:text-base text-stone-600">
                 {item.answer}
               </AccordionContent>
             </AccordionItem>
