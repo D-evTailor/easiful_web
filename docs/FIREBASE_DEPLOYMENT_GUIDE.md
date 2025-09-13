@@ -11,6 +11,15 @@ Before you begin, make sure you have:
 3. **Firebase CLI** - Installed locally for initial setup
 4. **Admin Access** - To both Firebase project and GitHub repository
 
+## 🎯 **Dual Deployment Strategy**
+
+This project is configured to work with **both Vercel and Firebase Hosting**:
+
+- **Vercel**: Normal Next.js build with API routes (current setup)
+- **Firebase Hosting**: Static export build without API routes (uses Firebase Functions instead)
+
+The configuration automatically switches based on the `FIREBASE_BUILD` environment variable.
+
 ## 🔧 Step-by-Step Setup
 
 ### Step 1: Firebase Project Setup

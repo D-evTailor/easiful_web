@@ -1,20 +1,13 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  // Enable static export for Firebase Hosting
-  output: 'export',
-  trailingSlash: true,
-  images: {
-    unoptimized: true, // Required for static export
-  },
-  
-  // Skip API routes in static export (they're handled by Firebase Functions)
-  generateBuildId: () => 'build',
-  
-  // Disable experimental features that might cause issues with static export
-  experimental: {
-    // Improve performance
-    optimizePackageImports: ['firebase', 'firebase-admin'],
-  },
+  // Conditional configuration: static export for Firebase, normal build for Vercel
+  ...(process.env.FIREBASE_BUILD === 'true' && {
+    output: 'export',
+    trailingSlash: true,
+    images: {
+      unoptimized: true, // Required for static export
+    },
+  }),
   
   // Disable source maps in development to avoid warnings
   productionBrowserSourceMaps: false,
@@ -22,6 +15,12 @@ const nextConfig = {
   // Configure ESLint to not fail the build
   eslint: {
     ignoreDuringBuilds: true,
+  },
+  
+  // Experimental features
+  experimental: {
+    // Improve performance
+    optimizePackageImports: ['firebase', 'firebase-admin'],
   },
   
   // Configure webpack to handle Firebase Admin SDK better
