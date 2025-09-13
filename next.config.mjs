@@ -1,5 +1,12 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  // Enable static export for Firebase Hosting
+  output: 'export',
+  trailingSlash: true,
+  images: {
+    unoptimized: true, // Required for static export
+  },
+  
   // Disable source maps in development to avoid warnings
   productionBrowserSourceMaps: false,
   
