@@ -7,6 +7,15 @@ const nextConfig = {
     unoptimized: true, // Required for static export
   },
   
+  // Skip API routes in static export (they're handled by Firebase Functions)
+  generateBuildId: () => 'build',
+  
+  // Disable experimental features that might cause issues with static export
+  experimental: {
+    // Improve performance
+    optimizePackageImports: ['firebase', 'firebase-admin'],
+  },
+  
   // Disable source maps in development to avoid warnings
   productionBrowserSourceMaps: false,
   
@@ -31,13 +40,12 @@ const nextConfig = {
       './functions': 'commonjs ./functions'
     });
     
+    // Exclude functions folder from TypeScript compilation
+    config.resolve = config.resolve || {};
+    config.resolve.alias = config.resolve.alias || {};
+    config.resolve.alias['@/functions'] = false;
+    
     return config;
-  },
-  
-  // Experimental features
-  experimental: {
-    // Improve performance
-    optimizePackageImports: ['firebase', 'firebase-admin'],
   }
 };
 
