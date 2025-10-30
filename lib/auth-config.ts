@@ -146,7 +146,14 @@ export const authOptions = {
           
           return true; // Permitir inicio de sesión.
         } catch (error: any) {
-          
+          // Log seguro para depurar en producción sin exponer datos sensibles
+          try {
+            console.error("[NextAuth][Google signIn] Admin getUserByEmail failed", {
+              code: error?.code,
+              message: error?.message,
+              firebaseProjectId: process.env.FIREBASE_PROJECT_ID,
+            });
+          } catch {}
           if (error.code === 'auth/user-not-found') {
             // Bloquear el login completamente - NextAuth manejará el error
             return false;
