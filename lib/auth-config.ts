@@ -19,10 +19,8 @@ export const authOptions = {
         password: { label: "Password", type: "password" },
       },
       async authorize(credentials): Promise<any> {
-        console.log(`🔍 Authorize attempt for: ${credentials?.email}`);
         
         if (!credentials?.email || !credentials.password) {
-          console.log('❌ Missing credentials');
           return null;
         }
         try {
@@ -32,11 +30,10 @@ export const authOptions = {
           let existingUser;
           try {
             existingUser = await adminAuth.getUserByEmail(credentials.email);
-            console.log(`✅ User found in Firebase Auth: ${existingUser.uid}`);
           } catch (error: any) {
             // "auth/user-not-found" es el error esperado si no existe.
             if (error.code === 'auth/user-not-found') {
-              console.log(`❌ Usuario ${credentials.email} no encontrado en Firebase.`);
+              
               // Devolvemos un error personalizado que la UI podrá interpretar.
               throw new Error("USER_NOT_FOUND");
             }
@@ -52,7 +49,6 @@ export const authOptions = {
           );
           
           if (userCredential.user) {
-            console.log(`✅ Authentication successful: ${userCredential.user.uid}`);
             
             // CRÍTICO: Verificar que el UID coincide con el existente
             if (userCredential.user.uid !== existingUser.uid) {
@@ -69,7 +65,7 @@ export const authOptions = {
           }
           return null;
         } catch (error: any) {
-          console.error("Firebase/NextAuth Auth Error:", error.message);
+        console.error("Firebase/NextAuth Auth Error:", error.message);
           // Pasamos el mensaje de error para que la UI pueda manejarlo.
           if (error.message === "USER_NOT_FOUND") {
             throw new Error("USER_NOT_FOUND");
@@ -80,14 +76,7 @@ export const authOptions = {
     }),
   ],
   // CRÍTICO: Configuraciones para prevenir creación automática de usuarios
-  events: {
-    async signIn(message: any) {
-      console.log(`🎉 User signed in: ${message.user.email} (${message.user.id})`);
-    },
-    async createUser(message: any) {
-      console.warn(`⚠️  CreateUser event triggered for: ${message.user.email} - This should NOT happen in solo-login mode!`);
-    },
-  },
+  events: {},
   // Configuración de sesión
   session: {
     strategy: "jwt" as const,
@@ -96,6 +85,14 @@ export const authOptions = {
     async jwt({ token, user, account }: { token: any, user: any, account: any }) {
       if (user) {
         token.id = user.id;
+        // Ensure we persist provider profile data (e.g., Google photo)
+        if (user.image || (user as any).picture) {
+          token.picture = user.image ?? (user as any).picture;
+        }
+        if (user.name) {
+          token.name = user.name;
+        }
+        
       }
       if (account) {
         token.provider = account.provider;
@@ -105,6 +102,12 @@ export const authOptions = {
     async session({ session, token }: { session: any, token: any }) {
       if (session?.user && token?.id) {
         session.user.id = token.id;
+        // Propagate picture/name from token into session for UI avatar
+        session.user.image = token.picture ?? session.user.image ?? null;
+        if (token.name) {
+          session.user.name = token.name;
+        }
+        
         
         try {
           const adminApp = getAdminApp();
@@ -131,58 +134,37 @@ export const authOptions = {
       return session;
     },
     async signIn({ user, account }: { user: any, account: any }) {
-      console.log(`🔍 SignIn callback - Provider: ${account?.provider}, Email: ${user?.email}, User ID: ${user?.id}`);
-      
       // Para proveedores OAuth como Google.
       if (account?.provider === "google") {
-        console.log(`🔍 Processing Google sign-in for: ${user.email}`);
         try {
           const adminAuth = getAdminAuth(getAdminApp());
           // Verificar si el usuario de Google existe en Firebase Auth.
           // Si no existe, bloqueamos el inicio de sesión.
           const existingUser = await adminAuth.getUserByEmail(user.email);
-          console.log(`✅ Google user verified: ${existingUser.uid}`);
-          
           // CRÍTICO: Asegurar que el ID que usamos es el UID existente
           user.id = existingUser.uid;
-          console.log(`🔧 User ID set to: ${user.id}`);
           
           return true; // Permitir inicio de sesión.
         } catch (error: any) {
-          console.log(`❌ Google sign-in check failed for ${user.email}:`, error.code);
+          
           if (error.code === 'auth/user-not-found') {
-            console.log(`❌ Google login blocked: Usuario ${user.email} no encontrado.`);
-            console.log(`🔄 Returning false to block login and trigger error page`);
             // Bloquear el login completamente - NextAuth manejará el error
             return false;
           }
-          console.error("Google sign-in check error:", error);
-          console.log(`🔄 Returning false to block login`);
           return false; // Bloquear por otros errores.
         }
       }
       
       // Para el proveedor de credenciales, ya se verificó en authorize()
-      console.log(`✅ Credentials login approved for: ${user?.email}`);
       return true;
     },
     async redirect({ url, baseUrl }: { url: string, baseUrl: string }) {
-      console.log(`🔄 Redirect callback - URL: ${url}, BaseURL: ${baseUrl}`);
-      
-      // Si es una URL relativa, preservar parámetros de query
+      // Mantener la lógica, sin logs ruidosos
       if (url.startsWith("/")) {
-        const fullUrl = `${baseUrl}${url}`;
-        console.log(`🔄 Redirecting to: ${fullUrl}`);
-        return fullUrl;
-      }
-      // Si es una URL completa del mismo origen, usarla tal como está
-      else if (new URL(url).origin === baseUrl) {
-        console.log(`🔄 Same origin redirect: ${url}`);
+        return `${baseUrl}${url}`;
+      } else if (new URL(url).origin === baseUrl) {
         return url;
       }
-      
-      // Por defecto, ir al home
-      console.log(`🔄 Default redirect to baseUrl: ${baseUrl}`);
       return baseUrl;
     },
   },

@@ -9,19 +9,13 @@ import { getAdminAuth } from "@/lib/firebase-admin-config";
  */
 export async function GET(request: NextRequest) {
   try {
-    console.log("🔑 API route /api/auth/firebase-token llamada");
     
     // Obtener la sesión del servidor
     const session = await getServerSession(authOptions);
-    console.log("Sesión obtenida:", { 
-      hasSession: !!session, 
-      hasUser: !!session?.user, 
-      userId: session?.user?.id 
-    });
+    
 
     // Verificar que el usuario esté autenticado
     if (!session || !session.user || !session.user.id) {
-      console.log("❌ Usuario no autenticado");
       return NextResponse.json(
         { error: "No authenticated user found" },
         { status: 401 }
@@ -30,16 +24,11 @@ export async function GET(request: NextRequest) {
 
     // Obtener el UID de Firebase (user.id en NextAuth)
     const firebaseUid = session.user.id;
-    console.log("Firebase UID:", firebaseUid);
 
     // Crear token personalizado usando Firebase Admin
-    console.log("🔥 Inicializando Firebase Admin...");
     const adminAuth = getAdminAuth();
     
-    console.log("🎫 Creando token personalizado...");
     const customToken = await adminAuth.createCustomToken(firebaseUid);
-    
-    console.log("✅ Token personalizado creado exitosamente");
     return NextResponse.json({ token: customToken });
 
   } catch (error) {

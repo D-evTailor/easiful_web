@@ -8,13 +8,18 @@ import { Globe, Menu, X, User, LogOut, LayoutDashboard } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger, DropdownMenuSeparator } from "@/components/ui/dropdown-menu"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import { useState } from "react"
+import { useEffect, useState } from "react"
 
 export default function Header() {
   const { data: session, status } = useSession()
   const { language, t } = useLanguage()
   const pathname = usePathname()
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
+
+  // DEBUG(client): trace session status and avatar availability once it changes
+  useEffect(() => {
+    console.log(`[header] status=${status} hasUser=${Boolean(session?.user)} hasImage=${Boolean(session?.user?.image)} name=${session?.user?.name ?? 'unknown'}`)
+  }, [status, session?.user?.image, session?.user?.name])
 
   const handleLanguageChange = (newLang: string) => {
     const currentPath = pathname
@@ -84,7 +89,11 @@ export default function Header() {
                 <DropdownMenuTrigger asChild>
                   <Button variant="ghost" className="relative h-8 w-8 md:h-9 md:w-9 rounded-full">
                     <Avatar className="w-8 h-8 md:w-9 md:h-9 border-2 border-stone-200 group-hover:border-emerald-500 transition-colors">
-                      <AvatarImage src={session.user?.image || undefined} alt="User avatar" />
+                      <AvatarImage
+                        src={session.user?.image || undefined}
+                        alt="User avatar"
+                        referrerPolicy="no-referrer"
+                      />
                       <AvatarFallback>
                         <User className="w-4 h-4 md:w-5 md:h-5 text-stone-600" />
                       </AvatarFallback>

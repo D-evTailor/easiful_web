@@ -10,20 +10,7 @@ const firebaseConfig = {
   appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID,
 };
 
-// Debugging: Verificar configuración del cliente
-console.log("Firebase Client Config:", {
-  apiKey: firebaseConfig.apiKey ? `${firebaseConfig.apiKey.substring(0, 10)}...` : "MISSING",
-  authDomain: firebaseConfig.authDomain || "MISSING",
-  projectId: firebaseConfig.projectId || "MISSING",
-  storageBucket: firebaseConfig.storageBucket || "MISSING",
-  messagingSenderId: firebaseConfig.messagingSenderId || "MISSING",
-  appId: firebaseConfig.appId ? `${firebaseConfig.appId.substring(0, 15)}...` : "MISSING",
-});
-
-// ⚠️ VERIFICACIÓN CRÍTICA: ¿Coincide el projectId?
-console.log("🔍 VERIFICACIÓN CRÍTICA:");
-console.log("Client projectId:", firebaseConfig.projectId);
-console.log("¿Es 'easifull-1f9e0'?", firebaseConfig.projectId === "easifull-1f9e0");
+// Debug logs removed
 
 // Verificar que todas las variables estén presentes
 const missingVars = [];
@@ -44,6 +31,6 @@ if (missingVars.length > 0) {
 const app = !getApps().length ? initializeApp(firebaseConfig) : getApp();
 const auth = getAuth(app);
 
-console.log("Firebase Client inicializado correctamente");
+// Initialization successful
 
 export { app, auth }; 

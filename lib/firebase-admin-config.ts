@@ -65,10 +65,7 @@ function initializeAdminApp(): App {
       projectId: projectId,
     });
 
-    console.log("Firebase Admin inicializado correctamente con variables individuales");
-    console.log("🔍 VERIFICACIÓN SERVIDOR:");
-    console.log("Server projectId:", projectId);
-    console.log("¿Es 'easifull-1f9e0'?", projectId === "easifull-1f9e0");
+    // Debug logs removed
     return adminApp;
 
   } catch (error) {
