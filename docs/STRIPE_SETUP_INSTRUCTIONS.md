@@ -27,8 +27,8 @@ firebase functions:config:get
 # Resultado:
 # {
 #   "stripe": {
-#     "secret_key": "sk_test_51Rj4lZPY7RDrzGXC...",
-#     "webhook_secret": "whsec_S109jNBpeAZ8GaC3bzjDkHeMPKhWh4eb"
+#     "secret_key": "<secret_key>",
+#     "webhook_secret": "<webhook_secret>"
 #   }
 # }
 ```
