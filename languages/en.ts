@@ -346,4 +346,7 @@ export const en = {
   "authAction.cta.goToLogin": "Go to login",
   "authAction.cta.continue": "Continue",
   "authAction.cta.openApp": "Open Easiful website",
-}; 
+  "authAction.verifyEmail.confirmCta": "Confirm",
+  "authAction.verifyEmail.afterSuccessHint": "You can now return to the app.",
+  "authAction.verifyEmail.postSuccessCta": "Explore the website",
+};
