@@ -346,4 +346,7 @@ export const es = {
   "authAction.cta.goToLogin": "Ir a iniciar sesión",
   "authAction.cta.continue": "Continuar",
   "authAction.cta.openApp": "Abrir la web de Easiful",
-}; 
+  "authAction.verifyEmail.confirmCta": "Confirmar",
+  "authAction.verifyEmail.afterSuccessHint": "Ya puedes volver a la app.",
+  "authAction.verifyEmail.postSuccessCta": "Conoce la web",
+};

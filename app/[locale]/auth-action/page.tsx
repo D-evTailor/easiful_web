@@ -46,12 +46,23 @@ export default function AuthActionPage() {
     const oobCode = searchParams.get("oobCode");
     const rawContinueUrl = searchParams.get("continueUrl");
 
-    // Sanitizar continueUrl: solo mismo origen (dominio propio)
+    // Sanitizar continueUrl: solo mismo origen (dominio propio) y evitar bucles hacia /auth-action
     if (rawContinueUrl) {
       try {
         const resolvedUrl = new URL(rawContinueUrl, window.location.origin);
         if (resolvedUrl.origin === window.location.origin) {
-          setContinueUrl(resolvedUrl.toString());
+          const path = resolvedUrl.pathname;
+          const isAuthActionPath =
+            path === "/auth-action" ||
+            path === "/es/auth-action" ||
+            path === "/en/auth-action" ||
+            path.endsWith("/auth-action");
+
+          if (!isAuthActionPath) {
+            setContinueUrl(resolvedUrl.toString());
+          } else if (process.env.NODE_ENV !== "production") {
+            console.warn("[auth-action] Ignoring continueUrl pointing to auth-action");
+          }
         } else {
           if (process.env.NODE_ENV !== "production") {
             console.warn("[auth-action] Ignoring continueUrl from different origin");
@@ -86,28 +97,6 @@ export default function AuthActionPage() {
       return;
     }
 
-    const handleVerifyEmail = async () => {
-      try {
-        setStatus("processing");
-        setErrorMessage(null);
-
-        await applyActionCode(auth, oobCode);
-
-        setStatus("success");
-      } catch (error: any) {
-        console.error("[auth-action] verifyEmail error", error?.code ?? error);
-        setStatus("error");
-
-        if (error?.code === "auth/expired-action-code") {
-          setErrorMessage(t("authAction.error.expiredCode"));
-        } else if (error?.code === "auth/invalid-action-code") {
-          setErrorMessage(t("authAction.error.invalidCode"));
-        } else {
-          setErrorMessage(t("authAction.error.generic"));
-        }
-      }
-    };
-
     const handlePrepareResetPassword = async () => {
       try {
         setStatus("processing");
@@ -130,9 +119,7 @@ export default function AuthActionPage() {
       }
     };
 
-    if (normalizedMode === "verifyEmail") {
-      void handleVerifyEmail();
-    } else if (normalizedMode === "resetPassword") {
+    if (normalizedMode === "resetPassword") {
       void handlePrepareResetPassword();
     }
   }, [t]);
@@ -191,6 +178,39 @@ export default function AuthActionPage() {
     }
   };
 
+  const handleVerifyEmailAction = async () => {
+    if (typeof window === "undefined") return;
+
+    const searchParams = new URLSearchParams(window.location.search);
+    const oobCode = searchParams.get("oobCode");
+
+    if (!oobCode) {
+      setStatus("error");
+      setErrorMessage(t("authAction.error.invalidAction"));
+      return;
+    }
+
+    try {
+      setStatus("processing");
+      setErrorMessage(null);
+
+      await applyActionCode(auth, oobCode);
+
+      setStatus("success");
+    } catch (error: any) {
+      console.error("[auth-action] verifyEmail error", error?.code ?? error);
+      setStatus("error");
+
+      if (error?.code === "auth/expired-action-code") {
+        setErrorMessage(t("authAction.error.expiredCode"));
+      } else if (error?.code === "auth/invalid-action-code") {
+        setErrorMessage(t("authAction.error.invalidCode"));
+      } else {
+        setErrorMessage(t("authAction.error.generic"));
+      }
+    }
+  };
+
   const primaryDestination = continueUrl ?? `/${language}/login`;
 
   const handlePrimaryCta = () => {
@@ -203,7 +223,9 @@ export default function AuthActionPage() {
   };
 
   const renderIcon = () => {
-    if (status === "processing" || status === "idle") {
+    const isVerifyEmail = mode === "verifyEmail";
+
+    if (status === "processing" || (status === "idle" && !isVerifyEmail)) {
       return <Loader2 className="h-10 w-10 animate-spin text-emerald-600" />;
     }
 
@@ -222,7 +244,8 @@ export default function AuthActionPage() {
     return <AlertCircle className="h-10 w-10 text-red-500" />;
   };
 
-  const isLoading = status === "processing" || status === "idle";
+  const isLoading =
+    status === "processing" || (status === "idle" && mode === "resetPassword");
   const showResetForm = status === "needsPassword" && mode === "resetPassword";
   const showSuccess = status === "success";
   const showError = status === "error" && !!errorMessage;
@@ -349,6 +372,11 @@ export default function AuthActionPage() {
                   ? t("authAction.verifyEmail.success")
                   : t("authAction.resetPassword.success")}
               </div>
+              {mode === "verifyEmail" && (
+                <p className="text-sm text-stone-600">
+                  {t("authAction.verifyEmail.afterSuccessHint")}
+                </p>
+              )}
             </div>
           )}
 
@@ -364,25 +392,61 @@ export default function AuthActionPage() {
         </CardContent>
 
         <CardFooter className="flex flex-col gap-3">
-          <Button
-            variant="outline"
-            className="w-full border-stone-300 text-stone-800 hover:bg-stone-100"
-            onClick={handlePrimaryCta}
-            disabled={isContinuing}
-          >
-            {isContinuing && (
-              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-            )}
-            {continueUrl
-              ? t("authAction.cta.continue")
-              : t("authAction.cta.goToLogin")}
-          </Button>
-          <Button
-            className="w-full bg-emerald-600 hover:bg-emerald-700 text-white"
-            onClick={handleOpenApp}
-          >
-            {t("authAction.cta.openApp")}
-          </Button>
+          {mode === "verifyEmail" ? (
+            <>
+              {status !== "success" && (
+                <Button
+                  className="w-full bg-emerald-600 hover:bg-emerald-700 text-white"
+                  onClick={handleVerifyEmailAction}
+                  disabled={status === "processing"}
+                >
+                  {status === "processing" && (
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  )}
+                  {t("authAction.verifyEmail.confirmCta")}
+                </Button>
+              )}
+              {status === "error" && (
+                <button
+                  type="button"
+                  onClick={handleOpenApp}
+                  className="mt-1 text-xs text-stone-500 hover:text-stone-700 underline-offset-2 hover:underline"
+                >
+                  {t("authAction.cta.goToLogin")}
+                </button>
+              )}
+              {status === "success" && (
+                <Button
+                  className="w-full bg-emerald-600 hover:bg-emerald-700 text-white"
+                  onClick={handleOpenApp}
+                >
+                  {t("authAction.verifyEmail.postSuccessCta")}
+                </Button>
+              )}
+            </>
+          ) : (
+            <>
+              <Button
+                variant="outline"
+                className="w-full border-stone-300 text-stone-800 hover:bg-stone-100"
+                onClick={handlePrimaryCta}
+                disabled={isContinuing}
+              >
+                {isContinuing && (
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                )}
+                {continueUrl
+                  ? t("authAction.cta.continue")
+                  : t("authAction.cta.goToLogin")}
+              </Button>
+              <Button
+                className="w-full bg-emerald-600 hover:bg-emerald-700 text-white"
+                onClick={handleOpenApp}
+              >
+                {t("authAction.cta.openApp")}
+              </Button>
+            </>
+          )}
         </CardFooter>
       </Card>
     </div>
