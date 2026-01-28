@@ -323,7 +323,7 @@ export const en = {
 
   "authAction.resetPassword.title": "Reset password",
   "authAction.resetPassword.subtitle": "Enter your new password to regain access to your account.",
-  "authAction.resetPassword.forEmail": "You are resetting the password for: {email}",
+  "authAction.resetPassword.forEmail": "You are resetting the password for this account:",
   "authAction.resetPassword.newPassword": "New password",
   "authAction.resetPassword.newPasswordPlaceholder": "Enter a secure password (min. 6 characters)",
   "authAction.resetPassword.confirmPassword": "Confirm password",

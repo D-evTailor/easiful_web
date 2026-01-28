@@ -323,7 +323,7 @@ export const es = {
 
   "authAction.resetPassword.title": "Restablecer contraseña",
   "authAction.resetPassword.subtitle": "Introduce tu nueva contraseña para recuperar el acceso a tu cuenta.",
-  "authAction.resetPassword.forEmail": "Vas a restablecer la contraseña de: {email}",
+  "authAction.resetPassword.forEmail": "Vas a restablecer la contraseña de la cuenta:",
   "authAction.resetPassword.newPassword": "Nueva contraseña",
   "authAction.resetPassword.newPasswordPlaceholder": "Introduce una contraseña segura (mín. 6 caracteres)",
   "authAction.resetPassword.confirmPassword": "Confirmar contraseña",

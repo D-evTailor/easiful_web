@@ -1,9 +1,9 @@
-\"use client\";
+"use client";
 
 import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { applyActionCode, confirmPasswordReset, verifyPasswordResetCode } from "firebase/auth";
-import { MailCheck, LockReset, AlertCircle, CheckCircle2, Loader2 } from "lucide-react";
+import { MailCheck, KeyRound, AlertCircle, CheckCircle2, Loader2 } from "lucide-react";
 
 import { auth } from "@/lib/firebase-config";
 import { useLanguage } from "@/lib/language-context";
@@ -212,7 +212,7 @@ export default function AuthActionPage() {
     }
 
     if (mode === "resetPassword") {
-      return <LockReset className="h-10 w-10 text-amber-600" />;
+      return <KeyRound className="h-10 w-10 text-amber-600" />;
     }
 
     if (mode === "verifyEmail") {
@@ -269,7 +269,8 @@ export default function AuthActionPage() {
             >
               {email && (
                 <div className="rounded-md bg-emerald-50 px-3 py-2 text-xs text-emerald-800 border border-emerald-100">
-                  {t("authAction.resetPassword.forEmail", { email })}
+                  {t("authAction.resetPassword.forEmail")}{" "}
+                  <span className="font-semibold break-all">{email}</span>
                 </div>
               )}
               <div className="space-y-2">

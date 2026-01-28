@@ -246,6 +246,34 @@ pnpm dev
 - [ ] Optimizar SEO
 - [ ] Configurar analytics
 
+## ⚙️ Configuración de Producción
+
+### pnpm Scripts Policy
+
+El proyecto usa `.npmrc` para controlar qué dependencias pueden ejecutar scripts durante la instalación:
+
+- ✅ **sharp**: Aprobado (necesario para optimización de imágenes de Next.js)
+- ❌ Resto de dependencias: Scripts deshabilitados por seguridad
+
+Esta configuración elimina el warning de pnpm en Vercel y asegura que solo las dependencias críticas ejecuten código durante el build.
+
+### Image Optimization
+
+Next.js está configurado para usar **sharp** en producción (Vercel):
+- Formatos: AVIF y WebP
+- Tamaños optimizados automáticamente
+- Cache TTL: 60 segundos
+- SVG soportado con CSP restrictivo
+
+## 📋 Production Checklist
+
+Antes de desplegar a producción, revisa `PRODUCTION_CHECKLIST.md` para verificar:
+- ✅ Variables de entorno configuradas
+- ✅ Firebase Action Links configurados
+- ✅ Build local exitoso
+- ✅ Tests de auth-action funcionando
+- ✅ Seguridad verificada
+
 ## 📄 Licencia
 
 Este proyecto está bajo la Licencia MIT. Ver el archivo `LICENSE` para más detalles.
