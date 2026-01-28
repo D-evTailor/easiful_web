@@ -269,7 +269,8 @@ export default function AuthActionPage() {
             >
               {email && (
                 <div className="rounded-md bg-emerald-50 px-3 py-2 text-xs text-emerald-800 border border-emerald-100">
-                  {t("authAction.resetPassword.forEmail", { email })}
+                  {t("authAction.resetPassword.forEmail")}{" "}
+                  <span className="font-semibold break-all">{email}</span>
                 </div>
               )}
               <div className="space-y-2">
