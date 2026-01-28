@@ -1,13 +1,15 @@
 import { redirect } from "next/navigation";
 
-type SearchParams = { [key: string]: string | string[] | undefined };
+type SearchParams = Record<string, string | string[] | undefined>;
 
 interface AuthActionAliasPageProps {
-  searchParams: SearchParams;
+  searchParams: Promise<SearchParams>;
 }
 
-export default function AuthActionAliasPage({ searchParams }: AuthActionAliasPageProps) {
-  const rawLang = searchParams.lang;
+export default async function AuthActionAliasPage({ searchParams }: AuthActionAliasPageProps) {
+  const sp = await searchParams;
+
+  const rawLang = sp.lang;
 
   const lang =
     typeof rawLang === "string"
@@ -20,7 +22,7 @@ export default function AuthActionAliasPage({ searchParams }: AuthActionAliasPag
 
   const params = new URLSearchParams();
 
-  for (const [key, value] of Object.entries(searchParams)) {
+  for (const [key, value] of Object.entries(sp)) {
     if (typeof value === "string") {
       params.append(key, value);
     } else if (Array.isArray(value)) {
@@ -35,4 +37,3 @@ export default function AuthActionAliasPage({ searchParams }: AuthActionAliasPag
 
   redirect(target);
 }
-
