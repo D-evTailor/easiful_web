@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { applyActionCode, confirmPasswordReset, verifyPasswordResetCode } from "firebase/auth";
-import { MailCheck, LockReset, AlertCircle, CheckCircle2, Loader2 } from "lucide-react";
+import { MailCheck, KeyRound, AlertCircle, CheckCircle2, Loader2 } from "lucide-react";
 
 import { auth } from "@/lib/firebase-config";
 import { useLanguage } from "@/lib/language-context";
@@ -212,7 +212,7 @@ export default function AuthActionPage() {
     }
 
     if (mode === "resetPassword") {
-      return <LockReset className="h-10 w-10 text-amber-600" />;
+      return <KeyRound className="h-10 w-10 text-amber-600" />;
     }
 
     if (mode === "verifyEmail") {
