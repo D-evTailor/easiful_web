@@ -15,12 +15,14 @@ export default function middleware(request: NextRequest) {
   if (pathnameHasLocale) return
 
   // Redirect if there is no locale
-  const locale = defaultLocale
+  const searchParams = request.nextUrl.searchParams
+  const lang = searchParams.get('lang')
+  const locale = locales.includes(lang ?? '') ? (lang as typeof locales[number]) : defaultLocale
   request.nextUrl.pathname = `/${locale}${pathname}`
   return NextResponse.redirect(request.nextUrl)
 }
 
 export const config = {
   // Match only internationalized pathnames
-  matcher: ['/', '/(es|en)/:path*']
+  matcher: ['/', '/auth-action', '/auth-action/:path*', '/(es|en)/:path*']
 } 
