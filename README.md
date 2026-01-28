@@ -147,6 +147,89 @@ pnpm build
 # El build estará en la carpeta .next/
 ```
 
+## 🔐 Acciones de autenticación Firebase (`/auth-action`)
+
+La web implementa una ruta dedicada para procesar **Action Links de Firebase Auth** (enlaces enviados por email desde Firebase):
+
+- `mode=verifyEmail&oobCode=...` → Verificación de correo
+- `mode=resetPassword&oobCode=...` → Restablecimiento de contraseña
+
+### Ruta
+
+- **Path web**: `/{locale}/auth-action`
+  - Ejemplos: `/es/auth-action`, `/en/auth-action`
+- La ruta se encarga de:
+  - Leer `mode` y `oobCode` desde la URL usando `URLSearchParams`
+  - Llamar al **Firebase Web SDK** en el cliente:
+    - `applyActionCode(auth, oobCode)` para `verifyEmail`
+    - `verifyPasswordResetCode(auth, oobCode)` + formulario de nueva contraseña + `confirmPasswordReset(auth, oobCode, newPassword)` para `resetPassword`
+
+### Estados de UI
+
+La pantalla muestra una UI consistente con el branding existente (shadcn/ui + Tailwind):
+
+- **Loading**: mientras se valida el enlace de Firebase
+- **Formulario de nueva contraseña** (solo para `resetPassword`)
+- **Success**:
+  - Mensaje de éxito localizado (ES/EN)
+  - CTA `Ir a iniciar sesión` → `/{locale}/login`
+  - CTA `Abrir la web de Easiful` → `/{locale}`
+- **Error**:
+  - Manejo específico de:
+    - `auth/expired-action-code`
+    - `auth/invalid-action-code`
+  - Mensaje genérico para otros errores
+
+### Seguridad
+
+- La configuración de Firebase ya está externalizada mediante variables `NEXT_PUBLIC_FIREBASE_*` (ver `.env.local.example`).
+- En la ruta `/auth-action`:
+  - **No se loguea nunca el `oobCode` completo**.
+  - Los logs de error solo incluyen `error.code` y mensajes genéricos.
+
+### Cómo probar los Action Links en local
+
+1. Configura las variables de entorno en `.env.local` usando como referencia `.env.local.example`:
+   - `NEXT_PUBLIC_FIREBASE_API_KEY`
+   - `NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN`
+   - `NEXT_PUBLIC_FIREBASE_PROJECT_ID`
+   - `NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET`
+   - `NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID`
+   - `NEXT_PUBLIC_FIREBASE_APP_ID`
+
+2. Lanza el entorno de desarrollo:
+
+```bash
+pnpm dev
+```
+
+3. En la **Consola de Firebase**:
+   - Ve a **Authentication → Plantillas de correo**.
+   - Asegúrate de que la URL de continuación / enlace de acción apunte a tu dominio:
+     - Para local: `http://localhost:3000/es/auth-action` (o `/en/auth-action`).
+     - Para producción (Vercel): `https://tu-dominio/es/auth-action`.
+
+4. Dispara una acción desde Firebase:
+   - **Verificar email**:
+     - Crea un usuario nuevo o dispara un nuevo email de verificación.
+     - Haz clic en el enlace recibido → aterrizará en `/es/auth-action?mode=verifyEmail&oobCode=...`.
+   - **Reset password**:
+     - Usa la opción de restablecer contraseña en Firebase Auth o desde la app móvil.
+     - El enlace debería apuntar a `/es/auth-action?mode=resetPassword&oobCode=...`.
+
+5. Verifica el comportamiento:
+   - Enlace válido:
+     - Verificación de email → mensaje de éxito + CTAs.
+     - Reset password → formulario de nueva contraseña → éxito + CTAs.
+   - Enlace expirado o inválido:
+     - Se muestra un mensaje de error amigable y localizado.
+
+### Notas de despliegue (Vercel)
+
+- No se requiere configuración adicional de Vercel más allá de:
+  - Definir las variables `NEXT_PUBLIC_FIREBASE_*` en **Project Settings → Environment Variables**.
+  - Asegurarse de que la URL configurada en los correos de Firebase apunte al dominio de Vercel (`https://...vercel.app/{locale}/auth-action` o dominio propio).
+
 ## 🤝 Contribución
 
 1. Fork el proyecto

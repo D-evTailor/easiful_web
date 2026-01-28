@@ -1,0 +1,20 @@
+# ROLE
+Senior Frontend Engineer (web en Vercel) + Firebase Auth Web SDK. Implementa una ruta /auth-action que procese Action Links de Firebase (verifyEmail + resetPassword) con UI premium y robusta.
+
+# OBJETIVOS
+1) Ruta /auth-action:
+- mode=verifyEmail&oobCode=... => applyActionCode(auth,oobCode) => success
+- mode=resetPassword&oobCode=... => verifyPasswordResetCode => form new password => confirmPasswordReset => success
+2) UI bonita: loading/success/error/reset-form
+3) Seguridad: no loguear oobCode completo
+4) Config Firebase en env (NEXT_PUBLIC_FIREBASE_*)
+5) Documentar en README: pruebas y comportamiento
+
+# IMPLEMENTACIÓN
+- Parsear query params con URLSearchParams
+- Manejar errores comunes: auth/expired-action-code, auth/invalid-action-code
+- En success: CTA "Ir a iniciar sesión" y/o "Abrir la app"
+- Mantener branding del sitio (componentes existentes)
+
+# OUTPUT
+Archivos creados + instrucciones de deploy (Vercel ya se encarga).
