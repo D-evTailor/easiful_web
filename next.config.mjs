@@ -9,7 +9,17 @@ const nextConfig = {
     },
   }),
   
-  // Disable source maps in development to avoid warnings
+  // Image optimization for Vercel (uses sharp)
+  images: process.env.FIREBASE_BUILD !== 'true' ? {
+    formats: ['image/avif', 'image/webp'],
+    deviceSizes: [640, 750, 828, 1080, 1200, 1920, 2048, 3840],
+    imageSizes: [16, 32, 48, 64, 96, 128, 256, 384],
+    minimumCacheTTL: 60,
+    dangerouslyAllowSVG: true,
+    contentSecurityPolicy: "default-src 'self'; script-src 'none'; sandbox;",
+  } : undefined,
+  
+  // Disable source maps in production to reduce bundle size
   productionBrowserSourceMaps: false,
   
   // Configure ESLint to not fail the build
@@ -20,7 +30,7 @@ const nextConfig = {
   // Experimental features
   experimental: {
     // Improve performance
-    optimizePackageImports: ['firebase', 'firebase-admin'],
+    optimizePackageImports: ['firebase', 'firebase-admin', '@radix-ui/react-icons', 'lucide-react'],
   },
   
   // Configure webpack to handle Firebase Admin SDK better
