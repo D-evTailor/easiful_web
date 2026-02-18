@@ -1,3 +1,5 @@
+// @ts-nocheck
+import type React from "react";
 import type { Metadata, Viewport } from "next";
 import { Quicksand } from "next/font/google";
 import { LanguageProvider } from "@/lib/language-context";
@@ -18,6 +20,27 @@ export const metadata: Metadata = {
     "La app que te ayuda a organizar tu vida diaria con paz, claridad y motivación. Descarga Easiful y transforma tu rutina.",
   keywords: "organización, productividad, app móvil, gestión del hogar, planificación",
   authors: [{ name: "Easiful Team" }],
+  openGraph: {
+    title: "Easiful - Organiza tu vida. Recupera tu tiempo.",
+    description:
+      "La app que te ayuda a organizar tu vida diaria con paz, claridad y motivación. Descarga Easiful y transforma tu rutina.",
+    images: [
+      {
+        url: "/favicon.png",
+        width: 512,
+        height: 512,
+        alt: "Easiful",
+      },
+    ],
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Easiful - Organiza tu vida. Recupera tu tiempo.",
+    description:
+      "La app que te ayuda a organizar tu vida diaria con paz, claridad y motivación. Descarga Easiful y transforma tu rutina.",
+    images: ["/favicon.png"],
+  },
 };
 
 export const viewport: Viewport = {

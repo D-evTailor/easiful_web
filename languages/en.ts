@@ -314,4 +314,39 @@ export const en = {
   "common.ok": "OK",
   "common.required": "Required",
   "common.optional": "Optional",
-}; 
+
+  // Auth action (Firebase action links)
+  "authAction.loading": "Processing your secure request...",
+  "authAction.verifyEmail.title": "Verifying your email",
+  "authAction.verifyEmail.subtitle": "We are confirming your email to complete the activation of your account.",
+  "authAction.verifyEmail.success": "Your email has been successfully verified! You can now sign in to Easiful.",
+
+  "authAction.resetPassword.title": "Reset password",
+  "authAction.resetPassword.subtitle": "Enter your new password to regain access to your account.",
+  "authAction.resetPassword.forEmail": "You are resetting the password for this account:",
+  "authAction.resetPassword.newPassword": "New password",
+  "authAction.resetPassword.newPasswordPlaceholder": "Enter a secure password (min. 6 characters)",
+  "authAction.resetPassword.confirmPassword": "Confirm password",
+  "authAction.resetPassword.confirmPasswordPlaceholder": "Repeat the new password",
+  "authAction.resetPassword.submit": "Save new password",
+  "authAction.resetPassword.submitting": "Saving password...",
+  "authAction.resetPassword.success": "Your password has been updated successfully. You can now sign in with your new credential.",
+  "authAction.resetPassword.passwordTooShort": "Password must be at least 6 characters long.",
+  "authAction.resetPassword.passwordsDontMatch": "Passwords do not match. Please check them.",
+   "authAction.resetPassword.requirements": "Your password should be at least 6 characters long. We recommend using a mix of letters, numbers and symbols.",
+  "authAction.resetPassword.passwordTooWeak": "This password is too weak. Try one that combines uppercase, lowercase, numbers and symbols.",
+
+  "authAction.error.title": "We could not complete the action",
+  "authAction.error.subtitle": "The link you used may have expired or may not be valid.",
+  "authAction.error.invalidAction": "The action link is not valid or is incomplete. Please request a new email from the app.",
+  "authAction.error.expiredCode": "The link has expired. Request a new verification or password reset email from the app.",
+  "authAction.error.invalidCode": "The link is not valid or has already been used. Please request a new one from the app.",
+  "authAction.error.generic": "An error occurred while processing the link. Please try again later or request a new email from the app.",
+
+  "authAction.cta.goToLogin": "Go to login",
+  "authAction.cta.continue": "Continue",
+  "authAction.cta.openApp": "Open Easiful website",
+  "authAction.verifyEmail.confirmCta": "Confirm",
+  "authAction.verifyEmail.afterSuccessHint": "You can now return to the app.",
+  "authAction.verifyEmail.postSuccessCta": "Explore the website",
+};

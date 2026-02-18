@@ -314,4 +314,39 @@ export const es = {
   "common.ok": "OK",
   "common.required": "Requerido",
   "common.optional": "Opcional",
-}; 
+
+  // Auth action (Firebase action links)
+  "authAction.loading": "Procesando tu solicitud segura...",
+  "authAction.verifyEmail.title": "Verificando tu correo electrónico",
+  "authAction.verifyEmail.subtitle": "Estamos confirmando tu correo para completar la activación de tu cuenta.",
+  "authAction.verifyEmail.success": "¡Tu correo ha sido verificado correctamente! Ya puedes iniciar sesión en Easiful.",
+
+  "authAction.resetPassword.title": "Restablecer contraseña",
+  "authAction.resetPassword.subtitle": "Introduce tu nueva contraseña para recuperar el acceso a tu cuenta.",
+  "authAction.resetPassword.forEmail": "Vas a restablecer la contraseña de la cuenta:",
+  "authAction.resetPassword.newPassword": "Nueva contraseña",
+  "authAction.resetPassword.newPasswordPlaceholder": "Introduce una contraseña segura (mín. 6 caracteres)",
+  "authAction.resetPassword.confirmPassword": "Confirmar contraseña",
+  "authAction.resetPassword.confirmPasswordPlaceholder": "Repite la nueva contraseña",
+  "authAction.resetPassword.submit": "Guardar nueva contraseña",
+  "authAction.resetPassword.submitting": "Guardando contraseña...",
+  "authAction.resetPassword.success": "Tu contraseña se ha actualizado correctamente. Ya puedes iniciar sesión con tu nueva credencial.",
+  "authAction.resetPassword.passwordTooShort": "La contraseña debe tener al menos 6 caracteres.",
+  "authAction.resetPassword.passwordsDontMatch": "Las contraseñas no coinciden. Por favor, revísalas.",
+  "authAction.resetPassword.requirements": "Tu contraseña debe tener al menos 6 caracteres. Te recomendamos usar una combinación de letras, números y símbolos.",
+  "authAction.resetPassword.passwordTooWeak": "Esta contraseña es demasiado débil. Prueba con una que combine mayúsculas, minúsculas, números y símbolos.",
+
+  "authAction.error.title": "No hemos podido completar la acción",
+  "authAction.error.subtitle": "El enlace que has utilizado puede haber expirado o no ser válido.",
+  "authAction.error.invalidAction": "El enlace de acción no es válido o está incompleto. Solicita un nuevo correo desde la app.",
+  "authAction.error.expiredCode": "El enlace ha expirado. Solicita un nuevo correo de verificación o de restablecimiento de contraseña desde la app.",
+  "authAction.error.invalidCode": "El enlace no es válido o ya ha sido utilizado. Prueba a solicitar uno nuevo desde la app.",
+  "authAction.error.generic": "Ha ocurrido un error al procesar el enlace. Inténtalo de nuevo más tarde o solicita un nuevo correo desde la app.",
+
+  "authAction.cta.goToLogin": "Ir a iniciar sesión",
+  "authAction.cta.continue": "Continuar",
+  "authAction.cta.openApp": "Abrir la web de Easiful",
+  "authAction.verifyEmail.confirmCta": "Confirmar",
+  "authAction.verifyEmail.afterSuccessHint": "Ya puedes volver a la app.",
+  "authAction.verifyEmail.postSuccessCta": "Conoce la web",
+};
