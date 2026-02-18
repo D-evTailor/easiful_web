@@ -20,6 +20,17 @@ type Status =
   | "success"
   | "error";
 
+type ErrorWithCode = {
+  code?: string;
+};
+
+const getErrorCode = (error: unknown): string | undefined => {
+  if (typeof error === "object" && error !== null && "code" in error) {
+    return (error as ErrorWithCode).code;
+  }
+  return undefined;
+};
+
 export default function AuthActionPage() {
   const router = useRouter();
   const { language, t } = useLanguage();
@@ -105,13 +116,14 @@ export default function AuthActionPage() {
         const emailFromCode = await verifyPasswordResetCode(auth, oobCode);
         setEmail(emailFromCode);
         setStatus("needsPassword");
-      } catch (error: any) {
-        console.error("[auth-action] resetPassword verify error", error?.code ?? error);
+      } catch (error: unknown) {
+        const errorCode = getErrorCode(error);
+        console.error("[auth-action] resetPassword verify error", errorCode ?? error);
         setStatus("error");
 
-        if (error?.code === "auth/expired-action-code") {
+        if (errorCode === "auth/expired-action-code") {
           setErrorMessage(t("authAction.error.expiredCode"));
-        } else if (error?.code === "auth/invalid-action-code") {
+        } else if (errorCode === "auth/invalid-action-code") {
           setErrorMessage(t("authAction.error.invalidCode"));
         } else {
           setErrorMessage(t("authAction.error.generic"));
@@ -160,15 +172,16 @@ export default function AuthActionPage() {
       await confirmPasswordReset(auth, oobCode, newPassword);
 
       setStatus("success");
-    } catch (error: any) {
-      console.error("[auth-action] resetPassword confirm error", error?.code ?? error);
+    } catch (error: unknown) {
+      const errorCode = getErrorCode(error);
+      console.error("[auth-action] resetPassword confirm error", errorCode ?? error);
       setStatus("error");
 
-      if (error?.code === "auth/expired-action-code") {
+      if (errorCode === "auth/expired-action-code") {
         setErrorMessage(t("authAction.error.expiredCode"));
-      } else if (error?.code === "auth/invalid-action-code") {
+      } else if (errorCode === "auth/invalid-action-code") {
         setErrorMessage(t("authAction.error.invalidCode"));
-      } else if (error?.code === "auth/weak-password") {
+      } else if (errorCode === "auth/weak-password") {
         setErrorMessage(t("authAction.resetPassword.passwordTooWeak"));
       } else {
         setErrorMessage(t("authAction.error.generic"));
@@ -197,13 +210,14 @@ export default function AuthActionPage() {
       await applyActionCode(auth, oobCode);
 
       setStatus("success");
-    } catch (error: any) {
-      console.error("[auth-action] verifyEmail error", error?.code ?? error);
+    } catch (error: unknown) {
+      const errorCode = getErrorCode(error);
+      console.error("[auth-action] verifyEmail error", errorCode ?? error);
       setStatus("error");
 
-      if (error?.code === "auth/expired-action-code") {
+      if (errorCode === "auth/expired-action-code") {
         setErrorMessage(t("authAction.error.expiredCode"));
-      } else if (error?.code === "auth/invalid-action-code") {
+      } else if (errorCode === "auth/invalid-action-code") {
         setErrorMessage(t("authAction.error.invalidCode"));
       } else {
         setErrorMessage(t("authAction.error.generic"));
