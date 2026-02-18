@@ -6,6 +6,8 @@ const defaultLocale = 'es'
 export default function middleware(request: NextRequest) {
   const pathname = request.nextUrl.pathname
 
+  if (pathname === '/ios' || pathname.startsWith('/ios/')) return
+
   const pathnameHasLocale = locales.some(
     (locale) => pathname.startsWith(`/${locale}/`) || pathname === `/${locale}`
   )
@@ -17,5 +19,5 @@ export default function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ['/((?!api|_next/static|_next/image|favicon\\.ico|.*\\.(?:png|jpg|jpeg|gif|svg|webp|mp4|webm|ico)).*)'],
+  matcher: ['/((?!api|ios(?:/.*)?|_next/static|_next/image|favicon\\.ico|.*\\.(?:png|jpg|jpeg|gif|svg|webp|mp4|webm|ico)).*)'],
 }

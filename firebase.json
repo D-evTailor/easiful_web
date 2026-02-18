@@ -20,6 +20,15 @@
     ],
     "headers": [
       {
+        "source": "/ios/manifest.plist",
+        "headers": [
+          {
+            "key": "Content-Type",
+            "value": "application/xml; charset=utf-8"
+          }
+        ]
+      },
+      {
         "source": "**/*.@(js|css)",
         "headers": [
           {

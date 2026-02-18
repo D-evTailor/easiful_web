@@ -98,6 +98,10 @@ FIREBASE_BUILD=true pnpm build
 firebase deploy --only hosting
 ```
 
+### OTA iOS (Ad-Hoc)
+
+La configuracion y operativa OTA para iOS estan documentadas en `docs/OTA_IOS.md`.
+
 ## Architecture Notes
 
 - **Functions**: Firebase Cloud Functions are managed in a separate repository (`easiful-functions`). See [ADR-001](docs/adr/001-functions-separate-repo.md).
