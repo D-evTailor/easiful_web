@@ -62,9 +62,7 @@ export default function ContactPage() {
 
     setIsSubmitting(true)
 
-    // Simulate API call
-    console.log("Formulario enviado:", formData)
-
+    // TODO(TICKET-CONTACT-API): Replace simulated call with real contact form API
     // Simulate network delay
     await new Promise((resolve) => setTimeout(resolve, 1500))
 

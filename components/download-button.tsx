@@ -3,17 +3,20 @@
 import { useLanguage } from "@/lib/language-context"
 import Image from "next/image"
 
+const GOOGLE_PLAY_URL =
+  process.env.NEXT_PUBLIC_GOOGLE_PLAY_URL ?? "#";
+const APP_STORE_URL =
+  process.env.NEXT_PUBLIC_APP_STORE_URL ?? "#";
+
 export function DownloadButton() {
   const { language } = useLanguage()
-  const handleDownload = () => {
-    window.open("https://www.youtube.com/watch?v=xvFZjo5PgG0&list=RDxvFZjo5PgG0&start_radio=1&ab_channel=Duran", "_blank")
-  }
 
   return (
     <div className="flex flex-col sm:flex-row gap-3 md:gap-4 justify-center items-center">
-      {/* Google Play Button */}
-      <button
-        onClick={handleDownload}
+      <a
+        href={GOOGLE_PLAY_URL}
+        target="_blank"
+        rel="noopener noreferrer"
         className="transition-all duration-300 transform hover:scale-105 hover:shadow-xl"
       >
         <Image
@@ -24,11 +27,12 @@ export function DownloadButton() {
           className="cursor-pointer md:w-[200px] md:h-[60px]"
           style={{ width: 'auto', height: 'auto' }}
         />
-      </button>
+      </a>
 
-      {/* App Store Button */}
-      <button
-        onClick={handleDownload}
+      <a
+        href={APP_STORE_URL}
+        target="_blank"
+        rel="noopener noreferrer"
         className="transition-all duration-300 transform hover:scale-105 hover:shadow-xl"
       >
         <Image
@@ -39,7 +43,7 @@ export function DownloadButton() {
           className="cursor-pointer md:w-[200px] md:h-[60px]"
           style={{ width: 'auto', height: 'auto' }}
         />
-      </button>
+      </a>
     </div>
   )
-} 
+}

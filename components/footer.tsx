@@ -4,6 +4,11 @@ import { useLanguage } from "@/lib/language-context"
 import Link from "next/link"
 import Image from "next/image"
 
+const GOOGLE_PLAY_URL =
+  process.env.NEXT_PUBLIC_GOOGLE_PLAY_URL ?? "#";
+const APP_STORE_URL =
+  process.env.NEXT_PUBLIC_APP_STORE_URL ?? "#";
+
 export default function Footer() {
   const { language, t } = useLanguage()
 
@@ -46,7 +51,7 @@ export default function Footer() {
           <div>
             <h4 className="font-semibold text-stone-800 mb-3 md:mb-4 text-sm md:text-base">{t("footer.downloadApp")}</h4>
             <div className="flex flex-col gap-2 md:-mt-4">
-              <Link href="https://www.youtube.com/shorts/le6hBT8JsUY" passHref>
+              <a href={APP_STORE_URL} target="_blank" rel="noopener noreferrer">
                 <Image 
                   src="/apple.png" 
                   alt="Download on the App Store" 
@@ -55,8 +60,8 @@ export default function Footer() {
                   className="hover:opacity-90 transition-opacity md:w-[135px] md:h-[40px]"
                   style={{ width: 'auto', height: 'auto' }}
                 />
-              </Link>
-              <Link href="https://www.youtube.com/shorts/SXHMnicI6Pg" passHref>
+              </a>
+              <a href={GOOGLE_PLAY_URL} target="_blank" rel="noopener noreferrer">
                 <Image 
                   src="/google.png" 
                   alt="Get it on Google Play" 
@@ -65,7 +70,7 @@ export default function Footer() {
                   className="hover:opacity-90 transition-opacity md:w-[135px] md:h-[40px]"
                   style={{ width: 'auto', height: 'auto' }}
                 />
-              </Link>
+              </a>
             </div>
           </div>
 

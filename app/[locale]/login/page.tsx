@@ -9,79 +9,37 @@ import { AuthContainer } from "@/components/auth/auth-container"
 import { AuthInput } from "@/components/auth/auth-input"
 import { AuthButton } from "@/components/auth/auth-button"
 import { AuthSeparator } from "@/components/auth/auth-separator"
-import Link from "next/link"
+
+const AUTH_ERROR_CODES_USER_NOT_FOUND = [
+  "UserNotFound",
+  "AccessDenied",
+  "OAuthCallback",
+];
 
 export default function LoginPage() {
   const { language, t } = useLanguage();
   const router = useRouter();
-  const [formData, setFormData] = useState({
-    email: "",
-    password: "",
-  })
+  const [formData, setFormData] = useState({ email: "", password: "" })
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
-  
-  // Log cuando se monta el componente
-  useEffect(() => {
-    console.log('🚀 LoginPage component mounted');
-    console.log('🌍 Current language:', language);
-  }, []);
-  
-  // Detectar errores de autenticación desde URL (Google Sign-In failed)
-  useEffect(() => {
-    if (typeof window !== 'undefined') {
-      const urlParams = new URLSearchParams(window.location.search);
-      const errorParam = urlParams.get('error');
-      
-      console.log('🔍 Current URL:', window.location.href);
-      console.log('🔍 All URL params:', Object.fromEntries(urlParams.entries()));
-      console.log('🔍 Checking URL for auth errors:', errorParam);
-      
-      if (errorParam === 'UserNotFound') {
-        console.log('🔍 Google Sign-In error detected from URL (UserNotFound)');
-        setError(t("login.userNotFound"));
-        
-        // Limpiar la URL sin recargar la página
-        const newUrl = window.location.pathname;
-        window.history.replaceState({}, '', newUrl);
-      } else if (errorParam === 'AccessDenied') {
-        console.log('🔍 NextAuth AccessDenied error detected (Google user not registered)');
-        setError(t("login.userNotFound"));
-        
-        // Limpiar la URL
-        const newUrl = window.location.pathname;
-        window.history.replaceState({}, '', newUrl);
-      } else if (errorParam === 'OAuthCallback') {
-        console.log('🔍 OAuth callback error detected');
-        setError(t("login.userNotFound"));
-        
-        // Limpiar la URL
-        const newUrl = window.location.pathname;
-        window.history.replaceState({}, '', newUrl);
-      } else if (errorParam) {
-        // Capturar cualquier otro error de autenticación
-        console.log(`🔍 Unknown auth error detected: ${errorParam}`);
-        console.log('🔍 Treating as user not registered error');
-        setError(t("login.userNotFound"));
-        
-        // Limpiar la URL
-        const newUrl = window.location.pathname;
-        window.history.replaceState({}, '', newUrl);
-      } else {
-        console.log('🟢 No error parameters, clearing error state');
-        setError(null);
-      }
-    }
-  }, [t]);
 
-  // Debug: Log cuando cambia el estado del error
   useEffect(() => {
-    if (error) {
-      console.log('🔴 Error state changed to:', error);
-    } else {
-      console.log('🟢 Error state cleared');
+    if (typeof window === "undefined") return;
+
+    const errorParam = new URLSearchParams(window.location.search).get("error");
+    if (!errorParam) {
+      setError(null);
+      return;
     }
-  }, [error]);
+
+    if (AUTH_ERROR_CODES_USER_NOT_FOUND.includes(errorParam)) {
+      setError(t("login.userNotFound"));
+    } else {
+      setError(t("login.userNotFound"));
+    }
+
+    window.history.replaceState({}, "", window.location.pathname);
+  }, [t]);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target
@@ -90,8 +48,6 @@ export default function LoginPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log('🚀 Login attempt started');
-    
     setIsLoading(true);
     setError(null);
 
@@ -102,49 +58,35 @@ export default function LoginPage() {
         redirect: false,
       });
 
-      console.log('📄 SignIn result:', result);
       setIsLoading(false);
 
       if (result?.error) {
-        console.log('❌ Error from NextAuth:', result.error);
         if (result.error.includes("USER_NOT_FOUND")) {
-          console.log('🔍 Setting USER_NOT_FOUND error');
           setError(t("login.userNotFound"));
-        } else if (result.error.includes("INVALID_CREDENTIALS")) {
-          console.log('🔍 Setting INVALID_CREDENTIALS error');
-          setError(t("login.credentialsError"));
         } else {
-          console.log('🔍 Setting generic credentials error');
           setError(t("login.credentialsError"));
         }
-        console.log('✅ Error state set, should display message');
       } else if (result?.ok) {
-        console.log('✅ Login successful, redirecting to dashboard');
         router.push(`/${language}/dashboard`);
       } else {
-        console.log('⚠️ Unexpected result state:', result);
         setError(t("login.credentialsError"));
       }
-    } catch (error) {
-      console.error('💥 Unexpected error during signIn:', error);
+    } catch {
       setIsLoading(false);
       setError(t("login.credentialsError"));
     }
   }
 
   const handleGoogleLogin = () => {
-    console.log('🚀 Google Sign-In attempt started');
-    // Mantener el comportamiento original con redirect: true
-    // NextAuth manejará el redirect y el error automáticamente
-    signIn("google", { 
+    signIn("google", {
       callbackUrl: `/${language}/dashboard`,
-      redirect: true 
+      redirect: true,
     });
   }
 
   const handleDownloadApp = () => {
-    // Redirige a la página principal, donde estarán los enlaces de descarga.
-    window.open("https://easiful.vercel.app/", "_blank");
+    const storeUrl = process.env.NEXT_PUBLIC_GOOGLE_PLAY_URL ?? "/";
+    window.open(storeUrl, "_blank");
   };
 
   return (
@@ -184,20 +126,14 @@ export default function LoginPage() {
           </div>
         )}
 
-        <div className="flex items-center justify-between">
+        <div className="flex items-center justify-start">
           <label className="flex items-center gap-2 text-sm text-stone-600">
-            <input 
-              type="checkbox" 
+            <input
+              type="checkbox"
               className="rounded border-stone-300 text-stone-800 focus:ring-amber-200"
             />
             {t("login.rememberMe")}
           </label>
-          <Link 
-            href="/forgot-password" 
-            className="text-sm text-stone-600 hover:text-stone-800 transition-colors"
-          >
-            {t("login.forgotPassword")}
-          </Link>
         </div>
 
         <div className="space-y-4">
@@ -207,9 +143,9 @@ export default function LoginPage() {
 
           <AuthSeparator text={t("login.continueWith")} />
 
-          <AuthButton 
-            type="button" 
-            variant="google" 
+          <AuthButton
+            type="button"
+            variant="google"
             onClick={handleGoogleLogin}
             icon={
               <svg className="w-5 h-5" viewBox="0 0 24 24">
@@ -224,7 +160,6 @@ export default function LoginPage() {
           </AuthButton>
         </div>
 
-        {/* --- CAMBIO PRINCIPAL: SECCIÓN DE REGISTRO REEMPLAZADA --- */}
         <div className="text-center text-sm text-stone-600 pt-4 border-t border-stone-200 mt-2">
           <p className="font-medium text-stone-800 mb-3">{t("login.noAccount")}</p>
           <AuthButton
@@ -239,4 +174,4 @@ export default function LoginPage() {
       </form>
     </AuthContainer>
   )
-} 
+}
