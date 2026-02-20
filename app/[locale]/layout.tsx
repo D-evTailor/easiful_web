@@ -1,18 +1,10 @@
-// @ts-nocheck
 import type React from "react";
 import type { Metadata, Viewport } from "next";
-import { Quicksand } from "next/font/google";
 import { LanguageProvider } from "@/lib/language-context";
 import Header from "@/components/header";
 import Footer from "@/components/footer";
 import CookieBanner from "@/components/cookie-banner";
 import Providers from "@/components/providers";
-
-const quicksand = Quicksand({
-  subsets: ["latin"],
-  weight: ["300", "400", "500", "600", "700"],
-  display: "swap",
-});
 
 export const metadata: Metadata = {
   title: "Easiful - Organiza tu vida. Recupera tu tiempo.",

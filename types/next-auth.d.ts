@@ -1,30 +1,31 @@
-import 'next-auth';
+import "next-auth";
+import "next-auth/jwt";
 
-// Docs on module augmentation: https://next-auth.js.org/getting-started/typescript
-
-// Define the shape of the subscription object
 interface Subscription {
   planId: string;
   status: string;
-  endDate?: Date; // Or string, depending on what you store
+  endDate?: Date;
   stripeSubscriptionId?: string;
 }
 
-declare module 'next-auth' {
-  /**
-   * Returned by `useSession`, `getSession` and received as a prop on the `SessionProvider` React Context
-   */
+declare module "next-auth" {
   interface Session {
     user: {
-      /** The user's subscription details. */
+      id: string;
       subscription: Subscription | null;
-    } & DefaultSession['user']; // Keep the default properties
+    } & DefaultSession["user"];
   }
 
-  /**
-   * The shape of the user object returned in the JWT and database.
-   */
   interface User {
+    id: string;
     subscription?: Subscription | null;
   }
-} 
+}
+
+declare module "next-auth/jwt" {
+  interface JWT {
+    id?: string;
+    provider?: string;
+    picture?: string | null;
+  }
+}

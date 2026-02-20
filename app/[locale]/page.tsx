@@ -12,12 +12,12 @@ export default function HomePage() {
   const flipWords = language === "es" ? [
     "hogar",
     "viaje",
-    "piso compartido",
+    "grupo de amigos",
     "vida"
   ] : [
     "home",
     "travel",
-    "shared apartment",
+    "friends",
     "life"
   ]
 

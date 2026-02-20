@@ -8,18 +8,13 @@ import { Globe, Menu, X, User, LogOut, LayoutDashboard } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger, DropdownMenuSeparator } from "@/components/ui/dropdown-menu"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import { useEffect, useState } from "react"
+import { useState } from "react"
 
 export default function Header() {
   const { data: session, status } = useSession()
   const { language, t } = useLanguage()
   const pathname = usePathname()
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
-
-  // DEBUG(client): trace session status and avatar availability once it changes
-  useEffect(() => {
-    console.log(`[header] status=${status} hasUser=${Boolean(session?.user)} hasImage=${Boolean(session?.user?.image)} name=${session?.user?.name ?? 'unknown'}`)
-  }, [status, session?.user?.image, session?.user?.name])
 
   const handleLanguageChange = (newLang: string) => {
     const currentPath = pathname

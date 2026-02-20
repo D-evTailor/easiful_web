@@ -1,76 +1,81 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "next-auth/next";
 import { authOptions } from "@/lib/auth-config";
+import {
+  isValidPlanId,
+  isValidLocale,
+  resolveStripePriceId,
+  buildCheckoutUrls,
+} from "@/lib/stripe-config";
 import Stripe from "stripe";
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
   apiVersion: "2025-06-30.basil",
 });
 
-/**
- * API Route temporal para crear sesiones de Stripe Checkout
- * Actúa como proxy para evitar problemas de CORS con Firebase Functions
- */
 export async function POST(request: NextRequest) {
   try {
-    console.log("🛍️ API route /api/stripe/checkout llamada");
-    
-    // Obtener la sesión del servidor
     const session = await getServerSession(authOptions);
-    
-    if (!session || !session.user || !session.user.id) {
-      console.log("❌ Usuario no autenticado");
+
+    if (!session?.user?.id) {
       return NextResponse.json(
-        { error: "No authenticated user found" },
+        { error: "Authentication required" },
         { status: 401 }
       );
     }
 
-    // Obtener los datos de la request
-    const { priceId, success_url, cancel_url } = await request.json();
-    
-    if (!priceId || !success_url || !cancel_url) {
+    let body: unknown;
+    try {
+      body = await request.json();
+    } catch {
       return NextResponse.json(
-        { error: "Faltan parámetros requeridos: priceId, success_url, cancel_url" },
+        { error: "Invalid request body" },
         { status: 400 }
       );
     }
 
-    console.log("📋 Datos recibidos:", { priceId, success_url, cancel_url });
+    const { planId, locale } = body as Record<string, unknown>;
 
-    // Crear la sesión de Stripe Checkout
+    if (typeof planId !== "string" || !isValidPlanId(planId)) {
+      return NextResponse.json(
+        { error: "Invalid plan selected" },
+        { status: 400 }
+      );
+    }
+
+    const resolvedLocale =
+      typeof locale === "string" && isValidLocale(locale) ? locale : "es";
+
+    const stripePriceId = resolveStripePriceId(planId);
+    if (!stripePriceId) {
+      return NextResponse.json(
+        { error: "Plan configuration error" },
+        { status: 500 }
+      );
+    }
+
+    const { successUrl, cancelUrl } = buildCheckoutUrls(resolvedLocale);
+
     const checkoutSession = await stripe.checkout.sessions.create({
       payment_method_types: ["card"],
       mode: "subscription",
       client_reference_id: session.user.id,
-      line_items: [
-        {
-          price: priceId,
-          quantity: 1,
-        },
-      ],
-      success_url,
-      cancel_url,
-      metadata: {
-        firebaseUID: session.user.id,
-      },
+      line_items: [{ price: stripePriceId, quantity: 1 }],
+      success_url: successUrl,
+      cancel_url: cancelUrl,
+      metadata: { firebaseUID: session.user.id },
     });
 
-    console.log("✅ Sesión de checkout creada:", checkoutSession.id);
-
     return NextResponse.json({ sessionId: checkoutSession.id });
-
   } catch (error) {
-    console.error("❌ Error en API route:", error);
-    
-    const errorMessage = error instanceof Error ? error.message : "Unknown error";
-    
+    console.error(
+      "[checkout] Failed to create session:",
+      error instanceof Error ? error.message : "Unknown error"
+    );
+
     return NextResponse.json(
-      { 
-        error: "Failed to create checkout session",
-        details: errorMessage 
-      },
+      { error: "Unable to start checkout. Please try again." },
       { status: 500 }
     );
   }
-} 
+}

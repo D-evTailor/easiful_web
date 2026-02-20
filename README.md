@@ -1,152 +1,130 @@
-# Easiful Web Corporativa
+# Easiful Web
 
-## 🌟 Descripción
+Corporate web application for **Easiful** — a personal organization mobile app. This web portal provides marketing pages, user authentication (login only, registration via mobile app), subscription management through Stripe, and a user dashboard.
 
-**Easiful** es una aplicación web corporativa moderna que promociona una app móvil de organización personal. Su objetivo es ayudar a las personas a organizar su vida diaria con paz, claridad y motivación.
+## Stack
 
-### 🎯 Características Principales
+- **Framework**: Next.js 15 (App Router)
+- **Language**: TypeScript 5
+- **Styling**: Tailwind CSS 3 + Radix UI + shadcn/ui
+- **Auth**: NextAuth v4 (Google OAuth + Email/Password via Firebase Auth)
+- **Payments**: Stripe Checkout (subscriptions)
+- **Backend**: Firebase Admin SDK (Firestore for user/subscription data)
+- **Hosting**: Firebase Hosting (static export)
+- **i18n**: Spanish (default) / English via `next-intl` and custom language context
+- **Package Manager**: pnpm
 
-- **🌍 Multiidioma**: Soporte para Español e Inglés
-- **📱 Responsive**: Diseño adaptativo para todos los dispositivos
-- **🎨 Animaciones**: Transiciones suaves y efectos visuales atractivos
-- **🎥 Contenido Multimedia**: Imágenes y videos promocionales
-- **⚡ Performance**: Optimizado para carga rápida
-- **♿ Accesibilidad**: Navegación por teclado y focus styles
+## Pages
 
-## 🛠️ Stack Tecnológico
+| Route | Description |
+|---|---|
+| `/[locale]` | Landing page with hero, features, CTA |
+| `/[locale]/login` | Login (email/password + Google). No registration — users register via mobile app |
+| `/[locale]/dashboard` | Authenticated user dashboard with subscription status |
+| `/[locale]/pricing` | Subscription plans (Free, Monthly 3.50€, Annual 12€) |
+| `/[locale]/sobre-nosotros` | About us |
+| `/[locale]/contacto` | Contact form |
+| `/[locale]/faq` | Frequently asked questions |
+| `/[locale]/legal/*` | Legal notice, privacy policy, cookie policy |
 
-- **Framework**: Next.js 15.2.4 (App Router)
-- **Lenguaje**: TypeScript 5.8.3
-- **Estilos**: Tailwind CSS 3.4.17
-- **Componentes UI**: Radix UI + shadcn/ui
-- **Gestor de paquetes**: pnpm
-- **Fuente**: Google Fonts (Quicksand)
+## API Routes
 
-## 🚀 Instalación Rápida
+| Route | Method | Description |
+|---|---|---|
+| `/api/auth/[...nextauth]` | GET/POST | NextAuth authentication endpoints |
+| `/api/auth/firebase-token` | GET | Generates Firebase custom tokens for authenticated users |
+| `/api/stripe/checkout` | POST | Creates Stripe checkout sessions (validates planId against server allowlist) |
+
+## Quick Start
 
 ```bash
-# Clonar el repositorio
-git clone https://github.com/Maybe-Sama/easiful_web.git
-cd easiful_web
-
-# Instalar dependencias
+# Clone and install
+git clone <repo-url>
+cd easiful-web
 pnpm install
 
-# Ejecutar en modo desarrollo
-pnpm dev
-```
+# Configure environment (copy and fill values)
+cp .env.local.example .env.local
 
-El proyecto estará disponible en `http://localhost:3000`
+# Development
+pnpm dev        # http://localhost:3000
 
-## 📁 Estructura del Proyecto
+# Quality checks
+pnpm lint       # ESLint
+pnpm test:unit  # Vitest unit tests
+npx tsc --noEmit # TypeScript check
 
-```
-easiful_web/
-├── app/                    # App Router de Next.js
-│   ├── contacto/          # Página de contacto
-│   ├── sobre-nosotros/    # Página sobre nosotros
-│   ├── globals.css        # Estilos globales
-│   ├── layout.tsx         # Layout principal
-│   └── page.tsx           # Página de inicio
-├── components/            # Componentes reutilizables
-│   ├── ui/               # Componentes UI (shadcn/ui)
-│   ├── header.tsx        # Componente header
-│   └── footer.tsx        # Componente footer
-├── lib/                  # Utilidades y contextos
-│   ├── language-context.tsx  # Contexto de idiomas
-│   └── utils.ts          # Funciones utilitarias
-├── public/               # Assets estáticos
-│   ├── movil_inicio.png  # Imagen promocional
-│   └── family.mp4        # Video promocional
-├── docs/                 # Documentación
-│   ├── estado-del-proyecto.md
-│   └── como-lanzar.md
-└── README.md
-```
-
-## 🎨 Características de Diseño
-
-### Paleta de Colores
-- **Primarios**: Stone (grises cálidos)
-- **Acentos**: Emerald (verde) y Amber (naranja)
-- **Fondo**: Gradiente sutil de colores cálidos
-
-### Tipografía
-- **Fuente**: Quicksand (Google Fonts)
-- **Pesos**: 300, 400, 500, 600, 700
-
-### Animaciones
-- **Fade In**: Aparición suave de elementos
-- **Slide Up**: Deslizamiento desde abajo
-- **Float**: Animación flotante para móviles
-- **Hover Effects**: Efectos de hover en cards y botones
-
-## 🌐 Páginas Disponibles
-
-1. **Inicio** (`/`)
-   - Hero section con imágenes y video
-   - Botón de descarga de Google Play
-   - Características principales
-   - Casos de uso
-
-2. **Sobre Nosotros** (`/sobre-nosotros`)
-   - Historia y misión de Easiful
-   - Filosofía de la empresa
-
-3. **Contacto** (`/contacto`)
-   - Formulario de contacto
-   - Información de contacto
-
-## 🔧 Scripts Disponibles
-
-```bash
-# Desarrollo
-pnpm dev
-
-# Build de producción
+# Production build
 pnpm build
-
-# Iniciar servidor de producción
-pnpm start
-
-# Linting
-pnpm lint
 ```
 
-## 📱 Responsive Design
+## Environment Variables
 
-El diseño está optimizado para:
-- **Desktop**: 1024px+
-- **Tablet**: 768px - 1023px
-- **Mobile**: 320px - 767px
+See `.env.local.example` for the full list. Required variables:
 
-## 🌍 Internacionalización
+| Variable | Required | Description |
+|---|---|---|
+| `NEXTAUTH_SECRET` | Yes | NextAuth encryption secret |
+| `NEXTAUTH_URL` | Yes | Canonical app URL (e.g., `https://easiful.com`) |
+| `GOOGLE_CLIENT_ID` | Yes | Google OAuth client ID |
+| `GOOGLE_CLIENT_SECRET` | Yes | Google OAuth client secret |
+| `NEXT_PUBLIC_FIREBASE_*` | Yes | Firebase client SDK config (6 vars) |
+| `FIREBASE_PROJECT_ID` | Yes | Firebase Admin project ID |
+| `FIREBASE_PRIVATE_KEY` | Yes | Firebase Admin private key |
+| `FIREBASE_CLIENT_EMAIL` | Yes | Firebase Admin client email |
+| `NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY` | Yes | Stripe publishable key |
+| `STRIPE_SECRET_KEY` | Yes | Stripe secret key |
+| `STRIPE_PRICE_MONTHLY` | No | Override monthly plan Stripe price ID |
+| `STRIPE_PRICE_ANNUAL` | No | Override annual plan Stripe price ID |
+| `NEXT_PUBLIC_GOOGLE_PLAY_URL` | No | Google Play store URL for download buttons |
+| `NEXT_PUBLIC_APP_STORE_URL` | No | App Store URL for download buttons |
 
-El proyecto soporta dos idiomas:
-- **Español** (por defecto)
-- **Inglés**
+## Deployment
 
-El cambio de idioma se realiza mediante un selector en el header.
+### Firebase Hosting (CI/CD)
 
-## 🚀 Despliegue
+The GitHub Actions workflow (`.github/workflows/firebase-deploy.yml`) handles deployment:
 
-### Vercel (Recomendado)
+- **Pull requests**: Deploy to preview channel (`pr-<number>`)
+- **Push to main/master**: Deploy to production
+
+Secrets must be configured in the GitHub repository settings.
+
+### Manual Build for Firebase
+
 ```bash
-# Instalar Vercel CLI
-npm install -g vercel
-
-# Desplegar
-vercel
+FIREBASE_BUILD=true pnpm build
+# Output in /out/ directory
+firebase deploy --only hosting
 ```
 
-### Build Manual
+### OTA iOS (Ad-Hoc)
+
+La configuracion y operativa OTA para iOS estan documentadas en `docs/OTA_IOS.md`.
+
+## Architecture Notes
+
+- **Functions**: Firebase Cloud Functions are managed in a separate repository (`easiful-functions`). See [ADR-001](docs/adr/001-functions-separate-repo.md).
+- **Auth flow**: Web supports login only. User registration happens exclusively via the mobile app. The web verifies users exist in Firebase Auth before allowing sign-in.
+- **Checkout flow**: Client sends a `planId` (e.g., "monthly"); the server resolves it to a Stripe price ID from an internal allowlist and constructs redirect URLs server-side.
+- **Subscription sync**: Stripe webhooks (in `easiful-functions`) update Firestore. The NextAuth session callback reads subscription data from Firestore on each session refresh.
+
+## Testing
+
 ```bash
-# Generar build
-pnpm build
-
-# El build estará en la carpeta .next/
+pnpm test:unit     # Unit tests (vitest) — validation, checkout route
+pnpm test          # E2E tests (Playwright) — requires running dev server
 ```
 
+<<<<<<< HEAD
+## Known State (2026-02-18)
+
+- Login, dashboard, pricing, and all public pages functional.
+- Stripe checkout hardened with server-side plan validation.
+- App store download URLs require configuration via env vars (currently default to `#`).
+- Contact form is a UI mock (no backend API yet — tracked as TODO).
+- E2E test suite exists for auth flows but requires test credentials to run.
+=======
 ## 🔐 Acciones de autenticación Firebase (`/auth-action`)
 
 La web implementa una ruta dedicada para procesar **Action Links de Firebase Auth** (enlaces enviados por email desde Firebase):
@@ -286,3 +264,4 @@ Este proyecto está bajo la Licencia MIT. Ver el archivo `LICENSE` para más det
 ---
 
 **Hecho con ❤️ usando Next.js y Tailwind CSS** 
+>>>>>>> 4b46a85038023a568ce4736e70d476adff8f4cbc
