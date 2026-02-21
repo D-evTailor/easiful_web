@@ -79,6 +79,8 @@ See `.env.local.example` for the full list. Required variables:
 | `NEXT_PUBLIC_GOOGLE_PLAY_URL` | No | Google Play store URL for download buttons |
 | `NEXT_PUBLIC_APP_STORE_URL` | No | App Store URL for download buttons |
 
+> **Vercel note on `FIREBASE_PRIVATE_KEY`:** When setting this variable in the Vercel dashboard, paste the raw multi-line key **without surrounding quotes**. Vercel handles newlines differently than local `.env` files — including `"` quotes or `\n` escape sequences as literal text will cause `Failed to parse private key: Unparsed DER bytes remain after ASN.1 parsing` errors at runtime. See [#15](https://github.com/D-evTailor/easiful_web/issues/15).
+
 ## Deployment
 
 ### Firebase Hosting (CI/CD)
