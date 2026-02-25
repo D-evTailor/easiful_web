@@ -85,8 +85,10 @@ export default function LoginPage() {
   }
 
   const handleDownloadApp = () => {
-    const storeUrl = process.env.NEXT_PUBLIC_GOOGLE_PLAY_URL ?? "/";
-    window.open(storeUrl, "_blank");
+    const storeUrl = process.env.NEXT_PUBLIC_GOOGLE_PLAY_URL;
+    if (storeUrl) {
+      window.open(storeUrl, "_blank");
+    }
   };
 
   return (

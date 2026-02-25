@@ -2,8 +2,6 @@
 
 import React from "react"
 import Image from "next/image"
-import Link from "next/link"
-import { ArrowLeft } from "lucide-react"
 
 interface AuthContainerProps {
   children: React.ReactNode
@@ -11,16 +9,14 @@ interface AuthContainerProps {
   imageAlt: string
   title: string
   subtitle: string
-  showBackButton?: boolean
 }
 
-export function AuthContainer({ 
-  children, 
-  imageSrc, 
-  imageAlt, 
-  title, 
+export function AuthContainer({
+  children,
+  imageSrc,
+  imageAlt,
+  title,
   subtitle,
-  showBackButton = true 
 }: AuthContainerProps) {
 
   return (

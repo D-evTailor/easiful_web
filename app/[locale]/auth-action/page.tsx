@@ -118,7 +118,7 @@ export default function AuthActionPage() {
         setStatus("needsPassword");
       } catch (error: unknown) {
         const errorCode = getErrorCode(error);
-        console.error("[auth-action] resetPassword verify error", errorCode ?? error);
+        console.error("[auth-action] reset verify error:", errorCode ?? "unknown");
         setStatus("error");
 
         if (errorCode === "auth/expired-action-code") {
@@ -174,7 +174,7 @@ export default function AuthActionPage() {
       setStatus("success");
     } catch (error: unknown) {
       const errorCode = getErrorCode(error);
-      console.error("[auth-action] resetPassword confirm error", errorCode ?? error);
+      console.error("[auth-action] reset confirm error:", errorCode ?? "unknown");
       setStatus("error");
 
       if (errorCode === "auth/expired-action-code") {
@@ -212,7 +212,7 @@ export default function AuthActionPage() {
       setStatus("success");
     } catch (error: unknown) {
       const errorCode = getErrorCode(error);
-      console.error("[auth-action] verifyEmail error", errorCode ?? error);
+      console.error("[auth-action] verifyEmail error:", errorCode ?? "unknown");
       setStatus("error");
 
       if (errorCode === "auth/expired-action-code") {

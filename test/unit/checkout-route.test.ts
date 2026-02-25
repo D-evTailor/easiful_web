@@ -1,4 +1,4 @@
-import { describe, it, expect, vi, beforeEach } from "vitest";
+import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 
 /**
  * Tests for the checkout API route validation logic (RF-06).
@@ -30,9 +30,7 @@ vi.mock("@/lib/auth-config", () => ({
   authOptions: {},
 }));
 
-// Provide NEXTAUTH_URL for URL construction
-vi.stubEnv("NEXTAUTH_URL", "https://easiful.com");
-vi.stubEnv("STRIPE_SECRET_KEY", "sk_test_fake");
+// Provide env vars needed by the route (runs before imports aren't hoisted, but before tests)
 
 import { getServerSession } from "next-auth/next";
 import { POST } from "@/app/api/stripe/checkout/route";
@@ -50,6 +48,14 @@ const mockedGetSession = vi.mocked(getServerSession);
 describe("POST /api/stripe/checkout (RF-06)", () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    vi.stubEnv("NEXTAUTH_URL", "https://easiful.com");
+    vi.stubEnv("STRIPE_SECRET_KEY", "sk_test_fake");
+    vi.stubEnv("STRIPE_PRICE_MONTHLY", "price_test_monthly");
+    vi.stubEnv("STRIPE_PRICE_ANNUAL", "price_test_annual");
+  });
+
+  afterEach(() => {
+    vi.unstubAllEnvs();
   });
 
   it("rejects unauthenticated requests with 401", async () => {
@@ -85,6 +91,32 @@ describe("POST /api/stripe/checkout (RF-06)", () => {
     });
 
     const res = await POST(makeRequest({}) as never);
+    const data = await res.json();
+
+    expect(res.status).toBe(400);
+    expect(data.error).toBe("Invalid plan selected");
+  });
+
+  it("rejects empty string planId with 400 (UT-01-E)", async () => {
+    mockedGetSession.mockResolvedValue({
+      user: { id: "uid123", email: "test@test.com" },
+      expires: "",
+    });
+
+    const res = await POST(makeRequest({ planId: "" }) as never);
+    const data = await res.json();
+
+    expect(res.status).toBe(400);
+    expect(data.error).toBe("Invalid plan selected");
+  });
+
+  it("rejects numeric planId with 400 (UT-01-F)", async () => {
+    mockedGetSession.mockResolvedValue({
+      user: { id: "uid123", email: "test@test.com" },
+      expires: "",
+    });
+
+    const res = await POST(makeRequest({ planId: 123 }) as never);
     const data = await res.json();
 
     expect(res.status).toBe(400);
@@ -159,5 +191,49 @@ describe("POST /api/stripe/checkout (RF-06)", () => {
 
     expect(data).not.toHaveProperty("details");
     expect(data).not.toHaveProperty("stack");
+  });
+
+  it("400 response has error field (UT-04-A)", async () => {
+    mockedGetSession.mockResolvedValue({
+      user: { id: "uid123", email: "test@test.com" },
+      expires: "",
+    });
+
+    const res = await POST(makeRequest({ planId: "hacked" }) as never);
+    const data = await res.json();
+
+    expect(res.status).toBe(400);
+    expect(data).toHaveProperty("error");
+    expect(typeof data.error).toBe("string");
+  });
+
+  it("400 response has no stack trace (UT-04-B)", async () => {
+    mockedGetSession.mockResolvedValue({
+      user: { id: "uid123", email: "test@test.com" },
+      expires: "",
+    });
+
+    const res = await POST(makeRequest({ planId: "hacked" }) as never);
+    const data = await res.json();
+
+    expect(data).not.toHaveProperty("stack");
+    expect(JSON.stringify(data)).not.toContain("at ");
+  });
+
+  it("400 response has no internal Stripe details (UT-04-C)", async () => {
+    mockedGetSession.mockResolvedValue({
+      user: { id: "uid123", email: "test@test.com" },
+      expires: "",
+    });
+
+    const res = await POST(makeRequest({ planId: "hacked" }) as never);
+    const data = await res.json();
+    const body = JSON.stringify(data);
+
+    expect(body).not.toContain("stripe");
+    expect(body).not.toContain("price_");
+    expect(body).not.toContain("sk_");
+    expect(data).not.toHaveProperty("code");
+    expect(data).not.toHaveProperty("type");
   });
 });

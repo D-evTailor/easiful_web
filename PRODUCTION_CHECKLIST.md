@@ -1,10 +1,10 @@
-# ✅ Production Checklist - Easiful Web
+# Production Checklist - Easiful Web
 
 ## Pre-Deploy Verification
 
-### 🔐 Environment Variables (Vercel)
+### Environment Variables (GitHub Secrets)
 
-Asegúrate de que estas variables estén configuradas en Vercel:
+Ensure these secrets are configured in GitHub repository settings for CI/CD:
 
 #### Firebase Client SDK (Frontend)
 - [ ] `NEXT_PUBLIC_FIREBASE_API_KEY`
@@ -17,188 +17,107 @@ Asegúrate de que estas variables estén configuradas en Vercel:
 #### Firebase Admin SDK (Backend)
 - [ ] `FIREBASE_PROJECT_ID`
 - [ ] `FIREBASE_PRIVATE_KEY_ID`
-- [ ] `FIREBASE_PRIVATE_KEY` (⚠️ debe mantener los `\n` literales)
+- [ ] `FIREBASE_PRIVATE_KEY` (multi-line key, no wrapping quotes)
 - [ ] `FIREBASE_CLIENT_EMAIL`
 - [ ] `FIREBASE_CLIENT_ID`
 - [ ] `FIREBASE_CLIENT_X509_CERT_URL`
 
 #### NextAuth
-- [ ] `NEXTAUTH_SECRET` (generado con `openssl rand -base64 32`)
-- [ ] `NEXTAUTH_URL` (URL de producción, ej: `https://easiful.vercel.app`)
+- [ ] `NEXTAUTH_SECRET` (generated with `openssl rand -base64 32`)
+- [ ] `NEXTAUTH_URL` (production URL, e.g., `https://easiful.com`)
 
 #### Google OAuth
 - [ ] `GOOGLE_CLIENT_ID`
 - [ ] `GOOGLE_CLIENT_SECRET`
 
-#### Stripe (si aplica)
+#### Stripe
 - [ ] `NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY`
 - [ ] `STRIPE_SECRET_KEY`
-- [ ] `STRIPE_WEBHOOK_SECRET`
+- [ ] `STRIPE_PRICE_MONTHLY`
+- [ ] `STRIPE_PRICE_ANNUAL`
+
+#### App Store URLs
+- [ ] `NEXT_PUBLIC_GOOGLE_PLAY_URL`
+- [ ] `NEXT_PUBLIC_APP_STORE_URL`
+
+#### Firebase Hosting Deployment
+- [ ] `FIREBASE_SERVICE_ACCOUNT_KEY` (JSON service account for Firebase CLI)
 
 ---
 
-## 🔥 Firebase Configuration
+## Firebase Configuration
 
 ### Action Links (Email Templates)
 
-Configurar en Firebase Console → Authentication → Templates:
+Configure in Firebase Console > Authentication > Templates:
 
-#### Email Verification
-- **URL de acción**: `https://tu-dominio.com/es/auth-action` (o `/en/auth-action`)
-- Parámetros automáticos: `mode=verifyEmail&oobCode=...`
+- **Email Verification URL**: `https://your-domain/es/auth-action`
+- **Password Reset URL**: `https://your-domain/es/auth-action`
+- Parameters are appended automatically: `mode=verifyEmail&oobCode=...`
 
-#### Password Reset
-- **URL de acción**: `https://tu-dominio.com/es/auth-action`
-- Parámetros automáticos: `mode=resetPassword&oobCode=...`
-
-### Dominios autorizados
-- [ ] Añadir dominio de Vercel en Firebase Console → Authentication → Settings → Authorized domains
+### Authorized Domains
+- [ ] Add production domain in Firebase Console > Authentication > Settings > Authorized domains
 
 ---
 
-## 🚀 Build Verification
+## Build Verification
 
 ### Local Build Test
 ```bash
-# Test production build locally
-pnpm build
-pnpm start
+# Quality checks
+npx tsc --noEmit    # TypeScript type check
+pnpm lint           # ESLint
+pnpm test:unit      # Unit tests
 
-# Verify no errors in console
+# Production build (Firebase static export)
+FIREBASE_BUILD=true pnpm build
 ```
 
-### Vercel Deploy
-- [ ] Build completa sin errores
-- [ ] No warnings críticos (solo el de pnpm scripts está OK)
-- [ ] Optimización de imágenes funcionando (sharp)
+### CI/CD Pipeline
+- [ ] Build completes without errors
+- [ ] Lint passes with zero warnings
+- [ ] Type check passes with zero errors
+- [ ] Unit tests pass
 
 ---
 
-## 🎨 Frontend Checks
+## Frontend Checks
 
-- [ ] `/es/auth-action?mode=verifyEmail&oobCode=test` → UI de error (código inválido)
-- [ ] `/es/auth-action?mode=resetPassword&oobCode=test` → UI de error (código inválido)
-- [ ] `/es/login` → Login flow funciona
-- [ ] `/es/dashboard` → Dashboard accesible solo con auth
-- [ ] `/es/pricing` → Pricing page funciona
-
----
-
-## 🔒 Security Checks
-
-- [ ] `.env.local` NO está en el repo (está en .gitignore)
-- [ ] `service-account-key.json` NO está en el repo
-- [ ] Logs no exponen `oobCode` completo
-- [ ] Logs no exponen claves privadas
-- [ ] `continueUrl` sanitización funciona (rechaza dominios externos)
+- [ ] `/es/auth-action?mode=verifyEmail&oobCode=test` shows error UI (invalid code)
+- [ ] `/es/auth-action?mode=resetPassword&oobCode=test` shows error UI (invalid code)
+- [ ] `/es/login` login flow works
+- [ ] `/es/dashboard` accessible only with auth
+- [ ] `/es/pricing` pricing page works
+- [ ] Download buttons show correct store URLs (or hidden when unconfigured)
 
 ---
 
-## 📊 Performance
+## Security Checks
+
+- [ ] `.env.local` NOT in repo (in `.gitignore`)
+- [ ] `service-account-key.json` NOT in repo
+- [ ] No `console.log` in production client code
+- [ ] Logs do not expose `oobCode`, tokens, or private keys
+- [ ] Stripe price IDs not exposed to client
+- [ ] Checkout URLs constructed server-side only
+
+---
+
+## Performance
 
 - [ ] Lighthouse Score > 90 (Performance)
-- [ ] First Contentful Paint < 1.5s
-- [ ] Time to Interactive < 3.5s
-- [ ] Imágenes optimizadas (WebP/AVIF)
-- [ ] No console.logs en producción
+- [ ] No console errors in production
 
 ---
 
-## 🌐 i18n (Internationalization)
+## i18n
 
-- [ ] `/es/...` funciona correctamente
-- [ ] `/en/...` funciona correctamente
-- [ ] Cambio de idioma en header funciona
-- [ ] Todas las claves de traducción existen en `languages/es.ts` y `languages/en.ts`
-
----
-
-## 🧪 Testing
-
-### Auth Action Flow
-
-#### Verify Email
-1. Crear usuario en Firebase
-2. Disparar email de verificación
-3. Clic en enlace → debe llegar a `/auth-action?mode=verifyEmail&oobCode=...`
-4. Verificar mensaje de éxito
-5. CTA "Ir a iniciar sesión" funciona
-
-#### Reset Password
-1. Disparar reset desde Firebase o app
-2. Clic en enlace → debe llegar a `/auth-action?mode=resetPassword&oobCode=...`
-3. Formulario aparece
-4. Validaciones funcionan:
-   - < 6 caracteres → error
-   - Contraseñas no coinciden → error
-   - Contraseña débil → error específico
-5. Submit exitoso → mensaje de éxito
-6. CTA funciona
-
-### Security Testing
-- [ ] Probar `continueUrl` con dominio externo → debe rechazarse
-- [ ] Probar `continueUrl` con dominio propio → debe redirigir
-- [ ] Probar código expirado → mensaje amigable
-- [ ] Probar código inválido → mensaje amigable
+- [ ] `/es/...` works correctly
+- [ ] `/en/...` works correctly
+- [ ] Language selector in header works
+- [ ] All translation keys exist in `languages/es.ts` and `languages/en.ts`
 
 ---
 
-## 📝 Documentation
-
-- [ ] README actualizado con auth-action flow
-- [ ] Variables de entorno documentadas
-- [ ] Instrucciones de deploy claras
-
----
-
-## ✨ Post-Deploy
-
-- [ ] Verificar todas las rutas en producción
-- [ ] Verificar que emails de Firebase lleguen correctamente
-- [ ] Verificar que enlaces de acción funcionen
-- [ ] Monitorear logs de Vercel por errores
-- [ ] Verificar Analytics (si aplica)
-
----
-
-## 🐛 Common Issues
-
-### Build Failures
-
-**Error: Cannot find module 'next'**
-- ✅ Resuelto: `next-env.d.ts` creado
-
-**Error: pnpm scripts warning**
-- ✅ Resuelto: `.npmrc` configurado para aprobar solo `sharp`
-
-### Runtime Errors
-
-**Firebase auth not working**
-- Verificar todas las variables `NEXT_PUBLIC_FIREBASE_*`
-- Verificar dominio autorizado en Firebase Console
-
-**Action links not working**
-- Verificar URL de acción en Firebase Email Templates
-- Verificar que incluya `mode` y `oobCode` en URL
-
-**Images not optimized**
-- Verificar que `sharp` se instaló correctamente
-- Verificar logs de Vercel para errores de sharp
-
----
-
-## 🎉 Success Criteria
-
-- ✅ Build verde en Vercel
-- ✅ Todos los flujos de auth funcionan
-- ✅ Action links (verify email + reset password) funcionan
-- ✅ Imágenes optimizadas (WebP/AVIF)
-- ✅ No errores en console de producción
-- ✅ Lighthouse > 90
-- ✅ i18n (ES/EN) funcionando
-- ✅ No warnings críticos
-
----
-
-**Última actualización**: 2026-01-28  
-**Estado**: ✅ PRODUCTION READY
+**Last updated**: 2026-02-22
+**Hosting**: Firebase Hosting (static export via `FIREBASE_BUILD=true`)

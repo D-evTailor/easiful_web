@@ -10,8 +10,6 @@ const firebaseConfig = {
   appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID,
 };
 
-// Debug logs removed
-
 // Verificar que todas las variables estén presentes
 const missingVars = [];
 if (!firebaseConfig.apiKey) missingVars.push("NEXT_PUBLIC_FIREBASE_API_KEY");
@@ -30,7 +28,5 @@ if (missingVars.length > 0) {
 // Server-side auth in NextAuth will use a separate initialization.
 const app = !getApps().length ? initializeApp(firebaseConfig) : getApp();
 const auth = getAuth(app);
-
-// Initialization successful
 
 export { app, auth }; 

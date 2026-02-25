@@ -64,14 +64,14 @@ export function FirebaseAuthProvider({ children }: FirebaseAuthProviderProps) {
           }
         }
       } catch (error) {
-        console.error("[firebase-auth:error]", error);
-        
+        console.error("[firebase-auth] sync failed:", error instanceof Error ? error.message : "Unknown error");
+
         // Si hay un error, intentar cerrar la sesión de Firebase para mantener consistencia
         if (auth.currentUser) {
           try {
             await signOut(auth);
           } catch (signOutError) {
-            console.error("[firebase-auth:signout-error]", signOutError);
+            console.error("[firebase-auth] signout cleanup failed:", signOutError instanceof Error ? signOutError.message : "Unknown error");
           }
         }
       }

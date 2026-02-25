@@ -10,7 +10,6 @@ import {
 } from "@/components/ui/table"
 import { Card } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
-import { Download } from "lucide-react"
 import { Badge } from "@/components/ui/badge"
 import { useLanguage } from "@/lib/language-context"
 
@@ -29,12 +28,6 @@ interface InvoiceHistoryProps {
 export default function InvoiceHistory({ invoices, isPremium }: InvoiceHistoryProps) {
   const { t } = useLanguage();
   
-  const statusClasses = {
-    [t("status.paid")]: "text-emerald-600",
-    [t("status.pending")]: "text-amber-600",
-    [t("status.failed")]: "text-red-600",
-  }
-
   return (
     <section>
       <h2 className="text-2xl font-semibold text-stone-700 mb-4">{t("dashboard.invoices.title")}</h2>

@@ -7,27 +7,30 @@
 export type PlanId = "monthly" | "annual";
 
 interface PlanConfig {
-  stripePriceId: string;
   name: string;
+  envVar: string;
 }
 
 const PLANS: Record<PlanId, PlanConfig> = {
   monthly: {
-    stripePriceId: process.env.STRIPE_PRICE_MONTHLY ?? "price_1Rj4q9PY7RDrzGXCxZ4Afq9k",
     name: "Premium Monthly",
+    envVar: "STRIPE_PRICE_MONTHLY",
   },
   annual: {
-    stripePriceId: process.env.STRIPE_PRICE_ANNUAL ?? "price_1RlvTkPY7RDrzGXCZAX3wkJg",
     name: "Premium Annual",
+    envVar: "STRIPE_PRICE_ANNUAL",
   },
 };
 
 const ALLOWED_LOCALES = ["es", "en"] as const;
 export type AllowedLocale = (typeof ALLOWED_LOCALES)[number];
 
-/** Resolve a client-facing planId to the internal Stripe priceId. Returns undefined if invalid. */
+/** Resolve a client-facing planId to the internal Stripe priceId. Returns undefined if invalid or unconfigured. */
 export function resolveStripePriceId(planId: string): string | undefined {
-  return (PLANS as Record<string, PlanConfig>)[planId]?.stripePriceId;
+  const plan = (PLANS as Record<string, PlanConfig>)[planId];
+  if (!plan) return undefined;
+  const priceId = process.env[plan.envVar];
+  return priceId || undefined;
 }
 
 export function isValidPlanId(planId: string): planId is PlanId {
